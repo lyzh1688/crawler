@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ynr.crawler.haier.access.dao.CrawlerGasgooMapper">
+    <resultMap id="BaseResultMap" type="com.ynr.crawler.haier.access.model.CrawlerGasgoo">
+        <result column="batch_id" jdbcType="INTEGER" property="batchId"/>
+        <result column="month" jdbcType="VARCHAR" property="month"/>
+        <result column="search_target" jdbcType="VARCHAR" property="searchTarget"/>
+        <result column="company" jdbcType="VARCHAR" property="company"/>
+        <collection property="jobItem" ofType="com.ynr.crawler.haier.access.model.CrawlerGasgooAttr"
+                    resultMap="CrawlerGasgooAttr"/>
+    </resultMap>
+    <resultMap id="CrawlerGasgooAttr" type="com.ynr.crawler.haier.access.model.CrawlerGasgooAttr">
+        <result column="attribute" jdbcType="VARCHAR" property="attribute"/>
+        <result column="attr_value" jdbcType="VARCHAR" property="attrValue"/>
+    </resultMap>
+    <select id="selectByTarget" resultMap="BaseResultMap">
+    select batch_id, month, search_target, company, attribute, attr_value
+    from crawler_gasgoo_result
+    where search_target = #{searchTarget} and month = #{month}
+  </select>
+</mapper>

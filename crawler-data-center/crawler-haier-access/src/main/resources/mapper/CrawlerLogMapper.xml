@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ynr.crawler.haier.access.dao.CrawlerLogMapper">
+  <resultMap id="BaseResultMap" type="com.ynr.crawler.haier.access.model.CrawlerLog">
+    <result column="batch_id" jdbcType="INTEGER" property="batchId" />
+    <result column="crawler_type" jdbcType="VARCHAR" property="crawlerType" />
+    <result column="update_date" jdbcType="VARCHAR" property="updateDate" />
+    <result column="step" jdbcType="VARCHAR" property="step" />
+    <result column="message" jdbcType="VARCHAR" property="message" />
+  </resultMap>
+  <insert id="insert" parameterType="com.ynr.crawler.haier.access.model.CrawlerLog">
+    insert into crawler_log (batch_id, crawler_type, update_date, 
+      step, message)
+    values (#{batchId,jdbcType=INTEGER}, #{crawlerType,jdbcType=VARCHAR}, #{updateDate,jdbcType=VARCHAR}, 
+      #{step,jdbcType=VARCHAR}, #{message,jdbcType=VARCHAR})
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select batch_id, crawler_type, update_date, step, message
+    from crawler_log
+  </select>
+</mapper>

@@ -1,0 +1,33 @@
+# 是否启用 Dataway 功能（必选：默认false）
+HASOR_DATAQL_DATAWAY: true
+# 是否开启 Dataway 后台管理界面（必选：默认false）
+HASOR_DATAQL_DATAWAY_ADMIN: true
+# dataway  API工作路径（可选，默认：/api/）
+HASOR_DATAQL_DATAWAY_API_URL: /api/
+# dataway-ui 的工作路径（可选，默认：/interface-ui/）
+HASOR_DATAQL_DATAWAY_UI_URL: /interface-ui/
+# SQL执行器方言设置（可选，建议设置）
+HASOR_DATAQL_FX_PAGE_DIALECT: mysql
+# db
+server:
+  port: 8083
+
+mybatis-plus:
+  # MyBatis Mapper所对应的XML文件位置
+  mapper-locations: classpath*:mapper/*/*Mapper.xml
+
+# 数据源
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: y2iaciej
+    url: jdbc:mysql://119.3.19.171:3306/hrm?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&allowMultiQueries=true
+    max-idle: 5
+    max-wait: 10000
+    min-idle: 1
+    initial-size: 2
+
+spring.application:
+  name: haier-access

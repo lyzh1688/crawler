@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ynr.crawler.haier.access.dao.CrawlerPigIndexMapper">
+  <resultMap id="BaseResultMap" type="com.ynr.crawler.haier.access.model.CrawlerPigIndex">
+    <result column="batch_id" jdbcType="INTEGER" property="batchId" />
+    <result column="index" jdbcType="VARCHAR" property="index" />
+    <result column="data_date" jdbcType="VARCHAR" property="dataDate" />
+    <result column="change_rate" jdbcType="VARCHAR" property="changeRate" />
+    <result column="change" jdbcType="VARCHAR" property="change" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="booking_price" jdbcType="VARCHAR" property="bookingPrice" />
+    <result column="trade_price" jdbcType="VARCHAR" property="tradePrice" />
+    <result column="avg_trade_weight" jdbcType="VARCHAR" property="avgTradeWeight" />
+  </resultMap>
+  <insert id="insert" parameterType="com.ynr.crawler.haier.access.model.CrawlerPigIndex">
+    insert into crawler_pigindex_result (batch_id, index, data_date, 
+      change_rate, change, name, 
+      booking_price, trade_price, avg_trade_weight
+      )
+    values (#{batchId,jdbcType=INTEGER}, #{index,jdbcType=VARCHAR}, #{dataDate,jdbcType=VARCHAR}, 
+      #{changeRate,jdbcType=VARCHAR}, #{change,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{bookingPrice,jdbcType=VARCHAR}, #{tradePrice,jdbcType=VARCHAR}, #{avgTradeWeight,jdbcType=VARCHAR}
+      )
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select batch_id, index, data_date, change_rate, change, name, booking_price, trade_price, 
+    avg_trade_weight
+    from crawler_pigindex_result
+  </select>
+</mapper>
