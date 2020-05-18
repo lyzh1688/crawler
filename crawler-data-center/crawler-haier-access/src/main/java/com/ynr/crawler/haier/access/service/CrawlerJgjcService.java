@@ -10,7 +10,7 @@ import java.util.List;
  * Dev Time: 2020/5/17 <br>
  */
 public interface CrawlerJgjcService extends IService<CrawlerJgjc> {
-    List<CrawlerJgjc> queryCrawlerJgjc(String crawler, String target, String dataDate);
+    List<CrawlerJgjc> queryCrawlerJgjc(String target, String dataDate);
 
 
 }

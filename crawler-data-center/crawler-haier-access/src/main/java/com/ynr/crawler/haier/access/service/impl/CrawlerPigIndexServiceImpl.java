@@ -20,7 +20,6 @@ public class CrawlerPigIndexServiceImpl extends ServiceImpl<CrawlerPigIndexMappe
 
     @Override
     public List<CrawlerPigIndex> queryCrawlerPigIndexData(String beginDate, String endDate) {
-        return this.list(Wrappers.<CrawlerPigIndex>query().lambda().ge(CrawlerPigIndex::getDataDate, beginDate)
-                .lt(CrawlerPigIndex::getDataDate, endDate));
+        return this.baseMapper.selectByDate(beginDate, endDate);
     }
 }

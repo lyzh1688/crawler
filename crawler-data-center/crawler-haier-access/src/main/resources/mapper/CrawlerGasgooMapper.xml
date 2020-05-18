@@ -6,7 +6,7 @@
         <result column="month" jdbcType="VARCHAR" property="month"/>
         <result column="search_target" jdbcType="VARCHAR" property="searchTarget"/>
         <result column="company" jdbcType="VARCHAR" property="company"/>
-        <collection property="jobItem" ofType="com.ynr.crawler.haier.access.model.CrawlerGasgooAttr"
+        <collection property="attrs" ofType="com.ynr.crawler.haier.access.model.CrawlerGasgooAttr"
                     resultMap="CrawlerGasgooAttr"/>
     </resultMap>
     <resultMap id="CrawlerGasgooAttr" type="com.ynr.crawler.haier.access.model.CrawlerGasgooAttr">
@@ -14,8 +14,23 @@
         <result column="attr_value" jdbcType="VARCHAR" property="attrValue"/>
     </resultMap>
     <select id="selectByTarget" resultMap="BaseResultMap">
-    select batch_id, month, search_target, company, attribute, attr_value
+    select batch_id, month, search_target, company
     from crawler_gasgoo_result
     where search_target = #{searchTarget} and month = #{month}
+    group by company
+    order by company desc
+  </select>
+    <select id="selectTargetAttr" resultMap="BaseResultMap">
+    select batch_id, month, search_target, company,attribute,attr_value
+    from crawler_gasgoo_result
+    <where>
+        search_target= #{searchTarget}
+        <foreach collection="list" index="index" item="item" open="and ( " close=" )" separator="or">
+            company = #{item}
+        </foreach>
+        and month = #{month}
+    </where>
+
+
   </select>
 </mapper>

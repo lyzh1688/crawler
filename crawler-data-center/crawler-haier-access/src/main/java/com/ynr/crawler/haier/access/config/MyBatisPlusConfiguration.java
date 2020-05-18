@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @MapperScan("com.ynr.crawler.haier.access.dao")
-@ComponentScan("com.tuoyou.tavern.common.core.exception")
+@ComponentScan("com.ynr.crawler.data.center.common.exception")
 public class MyBatisPlusConfiguration {
     /**
      * 分页插件

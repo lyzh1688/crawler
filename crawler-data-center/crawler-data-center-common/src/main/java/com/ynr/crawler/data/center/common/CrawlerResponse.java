@@ -19,7 +19,7 @@ public class CrawlerResponse {
     int retCode = RetCode.SUCCESS;
     @Getter
     @Setter
-    String retInfo = "ok";
+    String retInfo = "OK";
 
     public CrawlerResponse(int retCode, String retInfo) {
         this.retCode = retCode;

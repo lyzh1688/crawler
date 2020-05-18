@@ -11,10 +11,7 @@ import com.ynr.crawler.haier.access.service.CrawlerJgjcService;
 import com.ynr.crawler.haier.access.service.CrawlerPigIndexService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,12 +32,11 @@ public class CrawlerDataEndpoint {
     private CrawlerGasgooService crawlerGasgooService;
 
 
-    @GetMapping("/{crawler}/{target}/{dataDate}")
-    public CrawlerJgjcResponse queryJgjcData(@PathVariable("crawler") String crawler,
-                                             @PathVariable("target") String target,
+    @GetMapping("/jgjc/{target}/{dataDate}")
+    public CrawlerJgjcResponse queryJgjcData(@PathVariable("target") String target,
                                              @PathVariable("dataDate") String dataDate) {
-        log.info("[queryJgjcData] crawler: {},target: {},dataDate: {}", crawler, target, dataDate);
-        List<CrawlerJgjc> crawlerJgjcList = this.crawlerJgjcService.queryCrawlerJgjc(crawler, target, dataDate);
+        log.info("[queryJgjcData] target: {},dataDate: {}", target, dataDate);
+        List<CrawlerJgjc> crawlerJgjcList = this.crawlerJgjcService.queryCrawlerJgjc(target, dataDate);
         Map<String, Map<String, Map<String, CrawlerJgjcItem>>> payload = new HashMap<>();
 //        pork,chicken,egg
         Map<String, List<CrawlerJgjc>> productMap = crawlerJgjcList.stream()
@@ -68,11 +64,10 @@ public class CrawlerDataEndpoint {
     }
 
 
-    @GetMapping("/{crawler}/{begin}/{end}")
-    public CrawlerPigIndexResponse queryPigIndexData(@PathVariable("crawler") String crawler,
-                                                     @PathVariable("begin") String begin,
+    @GetMapping("/hqb/{begin}/{end}")
+    public CrawlerPigIndexResponse queryPigIndexData(@PathVariable("begin") String begin,
                                                      @PathVariable("end") String end) {
-        log.info("[queryPigIndexData] crawler: {},target: {},dataDate: {}", crawler, begin, end);
+        log.info("[queryPigIndexData] target: {},dataDate: {}", begin, end);
         List<CrawlerPigIndex> crawlerPigIndexList = crawlerPigIndexService.queryCrawlerPigIndexData(begin, end);
         List<CrawlerPigIndexItem> itemList = crawlerPigIndexList.stream()
                 .map(crawlerPigIndex -> {
@@ -92,15 +87,15 @@ public class CrawlerDataEndpoint {
         return new CrawlerPigIndexResponse(pigIndexList);
     }
 
-    @GetMapping("/{crawler}/{searchTarget}/{month}/page/{pageId}")
-    public CrawlerGasgooResponse queryGasgooData(@PathVariable("crawler") String crawler,
-                                                 @PathVariable("searchTarget") String searchTarget,
-                                                 @PathVariable("month") String month,
-                                                 @PathVariable("pageId") int pageId) {
-        log.info("[queryGasgooData] crawler: {},searchTarget: {},month: {},pageId: {}", crawler, searchTarget, month, pageId);
-        IPage<CrawlerGasgoo> pageResult = this.crawlerGasgooService.queryCrawlerGasgooData(searchTarget, month, pageId);
+    @GetMapping("/gasgoo/page")
+    public CrawlerGasgooResponse queryGasgooData(@RequestParam("searchTarget") String searchTarget,
+                                                 @RequestParam("month") String month,
+                                                 @RequestParam("pageId") int pageId,
+                                                 @RequestParam("pageSize") int pageSize) {
+        log.info("[queryGasgooData] searchTarget: {},month: {},pageId: {},pageSize: {}", searchTarget, month, pageId,pageSize);
+        IPage<CrawlerGasgoo> pageResult = this.crawlerGasgooService.queryCrawlerGasgooData(searchTarget, month, pageId,pageSize);
         List<CrawlerGasgoo> crawlerGasgooList = pageResult.getRecords();
-        long totalCnt = pageResult.getTotal();
+        long totalCnt = pageResult.getRecords().size();
         List<CrawlerGasgooCompany> crawlerGasgooCompanyList = crawlerGasgooList
                 .stream()
                 .map(crawlerGasgoo -> {

@@ -12,19 +12,10 @@
     <result column="trade_price" jdbcType="VARCHAR" property="tradePrice" />
     <result column="avg_trade_weight" jdbcType="VARCHAR" property="avgTradeWeight" />
   </resultMap>
-  <insert id="insert" parameterType="com.ynr.crawler.haier.access.model.CrawlerPigIndex">
-    insert into crawler_pigindex_result (batch_id, index, data_date, 
-      change_rate, change, name, 
-      booking_price, trade_price, avg_trade_weight
-      )
-    values (#{batchId,jdbcType=INTEGER}, #{index,jdbcType=VARCHAR}, #{dataDate,jdbcType=VARCHAR}, 
-      #{changeRate,jdbcType=VARCHAR}, #{change,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
-      #{bookingPrice,jdbcType=VARCHAR}, #{tradePrice,jdbcType=VARCHAR}, #{avgTradeWeight,jdbcType=VARCHAR}
-      )
-  </insert>
-  <select id="selectAll" resultMap="BaseResultMap">
-    select batch_id, index, data_date, change_rate, change, name, booking_price, trade_price, 
+  <select id="selectByDate" resultMap="BaseResultMap">
+    select batch_id, `index`, data_date, change_rate, `change`, name, booking_price, trade_price,
     avg_trade_weight
     from crawler_pigindex_result
+    WHERE data_date >= #{beginDate} AND data_date <![CDATA[ < ]]> #{endDate}
   </select>
 </mapper>

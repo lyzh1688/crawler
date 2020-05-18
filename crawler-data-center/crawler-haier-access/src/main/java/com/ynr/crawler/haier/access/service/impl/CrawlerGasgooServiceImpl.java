@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Code Monkey: ºÎ±ë <br>
@@ -19,10 +20,20 @@ import java.util.List;
 @AllArgsConstructor
 public class CrawlerGasgooServiceImpl extends ServiceImpl<CrawlerGasgooMapper, CrawlerGasgoo> implements CrawlerGasgooService {
     @Override
-    public IPage<CrawlerGasgoo> queryCrawlerGasgooData(String searchTarget, String month, int pageId) {
+    public IPage<CrawlerGasgoo> queryCrawlerGasgooData(String searchTarget, String month, int pageId, int pageSize) {
         Page page = new Page();
         page.setCurrent(pageId);
-        page.setSize(20L);
-        return this.baseMapper.selectByTarget(page,searchTarget,month);
+        page.setSize(pageSize);
+        IPage<CrawlerGasgoo> iPage = this.baseMapper.selectByTarget(page, searchTarget, month);
+        if (iPage.getRecords().size() == 0) {
+            return iPage;
+        }
+        List<String> targetList = iPage.getRecords().stream()
+                .map(CrawlerGasgoo::getCompany)
+                .collect(Collectors.toList());
+        iPage.setTotal((long) iPage.getRecords().size());
+        List<CrawlerGasgoo> gasgooList = this.baseMapper.selectTargetAttr(searchTarget, targetList, month);
+        iPage.setRecords(gasgooList);
+        return iPage;
     }
 }

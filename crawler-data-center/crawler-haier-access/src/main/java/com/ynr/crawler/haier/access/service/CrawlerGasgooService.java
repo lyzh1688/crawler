@@ -12,6 +12,6 @@ import java.util.List;
  */
 public interface CrawlerGasgooService extends IService<CrawlerGasgoo> {
 
-    IPage<CrawlerGasgoo> queryCrawlerGasgooData(String searchTarget, String month, int pageId);
+    IPage<CrawlerGasgoo> queryCrawlerGasgooData(String searchTarget, String month, int pageId,int pageSize);
 
 }

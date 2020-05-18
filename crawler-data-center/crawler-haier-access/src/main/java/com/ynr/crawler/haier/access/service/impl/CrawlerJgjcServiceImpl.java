@@ -19,9 +19,9 @@ import java.util.List;
 public class CrawlerJgjcServiceImpl extends ServiceImpl<CrawlerJgjcMapper, CrawlerJgjc> implements CrawlerJgjcService {
 
     @Override
-    public List<CrawlerJgjc> queryCrawlerJgjc(String crawler, String target, String dataDate) {
+    public List<CrawlerJgjc> queryCrawlerJgjc(String target, String dataDate) {
         if (target.equals("all")) {
-            return this.list(Wrappers.<CrawlerJgjc>query().lambda().eq(CrawlerJgjc::getDateDate, target));
+            return this.list(Wrappers.<CrawlerJgjc>query().lambda().eq(CrawlerJgjc::getDateDate, dataDate));
         }
         return this.list(Wrappers.<CrawlerJgjc>query().lambda().eq(CrawlerJgjc::getProductType, target)
                 .eq(CrawlerJgjc::getDateDate, dataDate));
