@@ -92,8 +92,8 @@ public class CrawlerDataEndpoint {
                                                  @RequestParam("month") String month,
                                                  @RequestParam("pageId") int pageId,
                                                  @RequestParam("pageSize") int pageSize) {
-        log.info("[queryGasgooData] searchTarget: {},month: {},pageId: {},pageSize: {}", searchTarget, month, pageId,pageSize);
-        IPage<CrawlerGasgoo> pageResult = this.crawlerGasgooService.queryCrawlerGasgooData(searchTarget, month, pageId,pageSize);
+        log.info("[queryGasgooData] searchTarget: {},month: {},pageId: {},pageSize: {}", searchTarget, month, pageId, pageSize);
+        IPage<CrawlerGasgoo> pageResult = this.crawlerGasgooService.queryCrawlerGasgooData(searchTarget, month, pageId, pageSize);
         List<CrawlerGasgoo> crawlerGasgooList = pageResult.getRecords();
         long totalCnt = pageResult.getRecords().size();
         List<CrawlerGasgooCompany> crawlerGasgooCompanyList = crawlerGasgooList
@@ -118,5 +118,13 @@ public class CrawlerDataEndpoint {
         crawlerGasgooItem.setTotalCount((int) totalCnt);
 
         return new CrawlerGasgooResponse(crawlerGasgooItem);
+    }
+
+    @GetMapping("/qts//{month}/page/{pageId}")
+    public CrawlerQtsResponse queryQtsData(@PathVariable("month") String month,
+                                           @PathVariable("pageId") int pageId) {
+        log.info("[queryQtsData] month: {},pageId: {}", month, pageId);
+
+        return null;
     }
 }
