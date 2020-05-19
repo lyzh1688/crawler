@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @AllArgsConstructor
-@RequestMapping("/haier")
+@RequestMapping("/api/haier")
 public class CrawlerDataEndpoint {
     private CrawlerJgjcService crawlerJgjcService;
     private CrawlerPigIndexService crawlerPigIndexService;
@@ -90,13 +90,12 @@ public class CrawlerDataEndpoint {
         return new CrawlerPigIndexResponse(pigIndexList);
     }
 
-    @GetMapping("/gasgoo/page")
-    public CrawlerGasgooResponse queryGasgooData(@RequestParam("searchTarget") String searchTarget,
-                                                 @RequestParam("month") String month,
-                                                 @RequestParam("pageId") int pageId,
-                                                 @RequestParam("pageSize") int pageSize) {
-        log.info("[queryGasgooData] searchTarget: {},month: {},pageId: {},pageSize: {}", searchTarget, month, pageId, pageSize);
-        IPage<CrawlerGasgoo> pageResult = this.crawlerGasgooService.queryCrawlerGasgooData(searchTarget, month, pageId, pageSize);
+    @GetMapping("/gasgoo/{searchTarget}/{month}/page/{pageId}")
+    public CrawlerGasgooResponse queryGasgooData(@PathVariable("searchTarget") String searchTarget,
+                                                 @PathVariable("month") String month,
+                                                 @PathVariable("pageId") int pageId) {
+        log.info("[queryGasgooData] searchTarget: {},month: {},pageId: {}", searchTarget, month, pageId);
+        IPage<CrawlerGasgoo> pageResult = this.crawlerGasgooService.queryCrawlerGasgooData(searchTarget, month, pageId);
         List<CrawlerGasgoo> crawlerGasgooList = pageResult.getRecords();
         long totalCnt = pageResult.getRecords().size();
         List<CrawlerGasgooCompany> crawlerGasgooCompanyList = crawlerGasgooList

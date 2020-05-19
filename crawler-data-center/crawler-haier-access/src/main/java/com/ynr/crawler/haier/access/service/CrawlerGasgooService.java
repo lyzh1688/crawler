@@ -7,11 +7,11 @@ import com.ynr.crawler.haier.access.model.CrawlerGasgoo;
 import java.util.List;
 
 /**
- * Code Monkey: ºÎ±ë <br>
+ * Code Monkey: ä½•å½ª <br>
  * Dev Time: 2020/5/17 <br>
  */
 public interface CrawlerGasgooService extends IService<CrawlerGasgoo> {
 
-    IPage<CrawlerGasgoo> queryCrawlerGasgooData(String searchTarget, String month, int pageId,int pageSize);
+    IPage<CrawlerGasgoo> queryCrawlerGasgooData(String searchTarget, String month, int pageId);
 
 }

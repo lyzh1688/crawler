@@ -13,17 +13,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Code Monkey: ºÎ±ë <br>
- * Dev Time: 2020/5/18 <br>
+ * Code Monkey: ä½•å½ª <br>
+ * Dev Time: 2020/5/17 <br>
  */
 @Service
 @AllArgsConstructor
 public class CrawlerGasgooServiceImpl extends ServiceImpl<CrawlerGasgooMapper, CrawlerGasgoo> implements CrawlerGasgooService {
     @Override
-    public IPage<CrawlerGasgoo> queryCrawlerGasgooData(String searchTarget, String month, int pageId, int pageSize) {
+    public IPage<CrawlerGasgoo> queryCrawlerGasgooData(String searchTarget, String month, int pageId) {
         Page page = new Page();
         page.setCurrent(pageId);
-        page.setSize(pageSize);
+        page.setSize(20);
         IPage<CrawlerGasgoo> iPage = this.baseMapper.selectByTarget(page, searchTarget, month);
         if (iPage.getRecords().size() == 0) {
             return iPage;
