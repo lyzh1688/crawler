@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ynr.crawler.haier.access.dao.CrawlerQtsMapper">
+    <resultMap id="BaseResultMap" type="com.ynr.crawler.haier.access.model.CrawlerQts">
+        <result column="batch_id" jdbcType="INTEGER" property="batchId"/>
+        <result column="company" jdbcType="VARCHAR" property="company"/>
+        <result column="prodType" jdbcType="VARCHAR" property="prodtype"/>
+        <result column="rule" jdbcType="VARCHAR" property="rule"/>
+        <result column="unit" jdbcType="VARCHAR" property="unit"/>
+        <result column="specs" jdbcType="VARCHAR" property="specs"/>
+        <result column="certificationID" jdbcType="VARCHAR" property="certificationid"/>
+        <result column="certDate" jdbcType="VARCHAR" property="certdate"/>
+        <result column="expireDate" jdbcType="VARCHAR" property="expiredate"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="isCancled" jdbcType="VARCHAR" property="iscancled"/>
+    </resultMap>
+    <select id="selectCrawlerQtsByPage" resultMap="BaseResultMap">
+    select batch_id, company, prodType, rule, unit, specs, certificationID, certDate, 
+    expireDate, status, isCancled
+    from crawler_qts_result
+    where month = #{month}
+  </select>
+</mapper>

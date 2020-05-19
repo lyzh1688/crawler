@@ -25,13 +25,15 @@
 
         <javaClientGenerator type="XMLMAPPER" targetPackage="com.ynr.crawler.haier.access.dao" targetProject="src/main/java" />
 
-        <table tableName="crawler_gasgoo_result" domainObjectName="CrawlerGasgoo">
+       <!-- <table tableName="crawler_gasgoo_result" domainObjectName="CrawlerGasgoo">
         </table>
         <table tableName="crawler_jgjc_result" domainObjectName="CrawlerJgjc">
         </table>
         <table tableName="crawler_log" domainObjectName="CrawlerLog">
         </table>
         <table tableName="crawler_pigindex_result" domainObjectName="CrawlerPigIndex">
+        </table>-->
+        <table tableName="crawler_qts_result" domainObjectName="CrawlerQts">
         </table>
 
 

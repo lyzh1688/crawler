@@ -6,9 +6,11 @@ import com.ynr.crawler.haier.access.dto.*;
 import com.ynr.crawler.haier.access.model.CrawlerGasgoo;
 import com.ynr.crawler.haier.access.model.CrawlerJgjc;
 import com.ynr.crawler.haier.access.model.CrawlerPigIndex;
+import com.ynr.crawler.haier.access.model.CrawlerQts;
 import com.ynr.crawler.haier.access.service.CrawlerGasgooService;
 import com.ynr.crawler.haier.access.service.CrawlerJgjcService;
 import com.ynr.crawler.haier.access.service.CrawlerPigIndexService;
+import com.ynr.crawler.haier.access.service.CrawlerQtsService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,7 @@ public class CrawlerDataEndpoint {
     private CrawlerJgjcService crawlerJgjcService;
     private CrawlerPigIndexService crawlerPigIndexService;
     private CrawlerGasgooService crawlerGasgooService;
+    private CrawlerQtsService crawlerQtsService;
 
 
     @GetMapping("/jgjc/{target}/{dataDate}")
@@ -120,11 +123,30 @@ public class CrawlerDataEndpoint {
         return new CrawlerGasgooResponse(crawlerGasgooItem);
     }
 
-    @GetMapping("/qts//{month}/page/{pageId}")
+    @GetMapping("/qts/{month}/page/{pageId}")
     public CrawlerQtsResponse queryQtsData(@PathVariable("month") String month,
                                            @PathVariable("pageId") int pageId) {
         log.info("[queryQtsData] month: {},pageId: {}", month, pageId);
-
-        return null;
+        IPage<CrawlerQts> page = this.crawlerQtsService.queryCrawlerQtsData(month, pageId);
+        List<CrawlerQtsCompany> crawlerQtsCompanyList = page.getRecords()
+                .stream()
+                .map(qts -> {
+                    CrawlerQtsCompany crawlerQtsCompany = new CrawlerQtsCompany();
+                    crawlerQtsCompany.setCompany(qts.getCompany());
+                    crawlerQtsCompany.setProdType(qts.getProdtype());
+                    crawlerQtsCompany.setRule(qts.getRule());
+                    crawlerQtsCompany.setUnit(qts.getUnit());
+                    crawlerQtsCompany.setSpecs(qts.getSpecs());
+                    crawlerQtsCompany.setCertificationID(qts.getCertificationid());
+                    crawlerQtsCompany.setCertDate(qts.getCertdate());
+                    crawlerQtsCompany.setExpireDate(qts.getExpiredate());
+                    crawlerQtsCompany.setStatus(qts.getStatus());
+                    crawlerQtsCompany.setIsCancled(qts.getIscancled());
+                    return crawlerQtsCompany;
+                }).collect(Collectors.toList());
+        CrawlerQtsItem crawlerQtsItem = new CrawlerQtsItem();
+        crawlerQtsItem.setItems(crawlerQtsCompanyList);
+        crawlerQtsItem.setTotalCnt((int) page.getTotal());
+        return new CrawlerQtsResponse(crawlerQtsItem);
     }
 }
