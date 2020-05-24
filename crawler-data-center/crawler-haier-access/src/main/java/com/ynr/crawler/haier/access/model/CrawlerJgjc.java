@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.time.LocalDateTime;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @TableName("crawler_jgjc_result")
@@ -27,6 +29,6 @@ public class CrawlerJgjc extends Model<CrawlerJgjc> {
 
     private String profitCount;
 
-    private String updateDate;
+    private LocalDateTime updateDate;
 
 }

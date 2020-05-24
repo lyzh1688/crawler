@@ -11,7 +11,7 @@
     <result column="rate" jdbcType="VARCHAR" property="rate" />
     <result column="balance" jdbcType="VARCHAR" property="balance" />
     <result column="profit_count" jdbcType="VARCHAR" property="profitCount" />
-    <result column="update_date" jdbcType="VARCHAR" property="updateDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
   </resultMap>
   <insert id="insert" parameterType="com.ynr.crawler.haier.access.model.CrawlerJgjc">
     insert into crawler_jgjc_result (batch_id, date_date, product_type, 
@@ -21,7 +21,7 @@
     values (#{batchId,jdbcType=INTEGER}, #{dateDate,jdbcType=VARCHAR}, #{productType,jdbcType=VARCHAR}, 
       #{statType,jdbcType=VARCHAR}, #{rawPrice,jdbcType=VARCHAR}, #{fodderPrice,jdbcType=VARCHAR}, 
       #{rate,jdbcType=VARCHAR}, #{balance,jdbcType=VARCHAR}, #{profitCount,jdbcType=VARCHAR}, 
-      #{updateDate,jdbcType=VARCHAR})
+      #{updateDate,jdbcType=TIMESTAMP})
   </insert>
   <select id="selectAll" resultMap="BaseResultMap">
     select batch_id, date_date, product_type, stat_type, raw_price, fodder_price, rate, 
