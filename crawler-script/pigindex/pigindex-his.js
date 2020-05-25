@@ -25,6 +25,7 @@ var save = require('./../save/save')
 	 
 	 
 	}
+	
 
 	console.log('end')
 	await browser.close();
@@ -35,7 +36,7 @@ async function queryPageUrlPost(page,id) {
 	
 		console.log("id:  " + id)
 
-		let body = await page.goto('https://hqb.nxin.com/pigindex/getPigIndex.shtml?regionId=' + id);
+		let body = await page.goto('https://hqb.nxin.com/pigindex/getPigIndexChart.shtml?regionId=' + id);
 
 		await page.addScriptTag({url: 'https://code.jquery.com/jquery-3.2.1.min.js'})
 		
@@ -43,10 +44,7 @@ async function queryPageUrlPost(page,id) {
 		let array = await page.evaluate(async ()=>{
 			
 				
-			var res = $(".f72.red.clear").text();
-			
-			console.log('res: ' + res)
-			console.log('res length: ' + res.length)
+			var res = jQuery.parseJSON($("body").text());
 					
 			if(res.data == null || res.data.length == 0 || res.data == undefined ){
 			console.log('没有数据')
