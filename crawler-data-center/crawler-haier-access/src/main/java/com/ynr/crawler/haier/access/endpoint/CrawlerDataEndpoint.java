@@ -2,6 +2,7 @@ package com.ynr.crawler.haier.access.endpoint;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.google.common.collect.Maps;
+import com.ynr.crawler.haier.access.dict.ProductType;
 import com.ynr.crawler.haier.access.dto.*;
 import com.ynr.crawler.haier.access.model.CrawlerGasgoo;
 import com.ynr.crawler.haier.access.model.CrawlerJgjc;
@@ -13,9 +14,11 @@ import com.ynr.crawler.haier.access.service.CrawlerPigIndexService;
 import com.ynr.crawler.haier.access.service.CrawlerQtsService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -40,7 +43,11 @@ public class CrawlerDataEndpoint {
                                              @PathVariable("dataDate") String dataDate) {
         log.info("[queryJgjcData] target: {},dataDate: {}", target, dataDate);
         List<CrawlerJgjc> crawlerJgjcList = this.crawlerJgjcService.queryCrawlerJgjc(target, dataDate);
-        Map<String, Map<String, Map<String, CrawlerJgjcItem>>> payload = new HashMap<>();
+        CrawlerJgjcInfo crawlerJgjcInfo = new CrawlerJgjcInfo();
+        crawlerJgjcInfo.setDataDate(dataDate);
+        if (!crawlerJgjcList.isEmpty()) {
+            crawlerJgjcInfo.setReleaseDate(crawlerJgjcList.get(0).getReleaseDate());
+        }
 //        pork,chicken,egg
         Map<String, List<CrawlerJgjc>> productMap = crawlerJgjcList.stream()
                 .collect(Collectors.groupingBy(CrawlerJgjc::getProductType));
@@ -62,15 +69,30 @@ public class CrawlerDataEndpoint {
                     tmpMap.put(entry.getKey(), tmpJgjcMap);
                     return tmpMap.entrySet().stream();
                 }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        payload.put("dataDate", jgjcItemMap);
-        return new CrawlerJgjcResponse(payload);
+        for (Map.Entry<String, Map<String, CrawlerJgjcItem>> entry : jgjcItemMap.entrySet()) {
+            ProductType productType = ProductType.valueOfProductType(entry.getKey());
+            switch (productType) {
+                case PORK:
+                    crawlerJgjcInfo.setPork(entry.getValue());
+                    break;
+                case EGG:
+                    crawlerJgjcInfo.setEgg(entry.getValue());
+                    break;
+                case CHICKEN:
+                    crawlerJgjcInfo.setChicken(entry.getValue());
+                    break;
+                default:
+                    break;
+            }
+        }
+        return new CrawlerJgjcResponse(crawlerJgjcInfo);
     }
 
 
     @GetMapping("/hqb/{begin}/{end}")
     public CrawlerPigIndexResponse queryPigIndexData(@PathVariable("begin") String begin,
                                                      @PathVariable("end") String end) {
-        log.info("[queryPigIndexData] target: {},dataDate: {}", begin, end);
+        log.info("[queryPigIndexData] begin: {},end: {}", begin, end);
         List<CrawlerPigIndex> crawlerPigIndexList = crawlerPigIndexService.queryCrawlerPigIndexData(begin, end);
         List<CrawlerPigIndexItem> itemList = crawlerPigIndexList.stream()
                 .map(crawlerPigIndex -> {
@@ -79,7 +101,7 @@ public class CrawlerDataEndpoint {
                     item.setD(crawlerPigIndex.getDataDate());
                     item.setCr(crawlerPigIndex.getChangeRate());
                     item.setC(crawlerPigIndex.getChange());
-                    item.setN(crawlerPigIndex.getName());
+                    item.setR(crawlerPigIndex.getRegion());
                     item.setBp(crawlerPigIndex.getBookingPrice());
                     item.setTp(crawlerPigIndex.getTradePrice());
                     item.setAtw(crawlerPigIndex.getAvgTradeWeight());

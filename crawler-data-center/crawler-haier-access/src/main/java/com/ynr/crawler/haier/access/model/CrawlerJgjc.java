@@ -13,7 +13,9 @@ import java.time.LocalDateTime;
 public class CrawlerJgjc extends Model<CrawlerJgjc> {
     private Integer batchId;
 
-    private String dateDate;
+    private String dataDate;
+
+    private String releaseDate;
 
     private String productType;
 

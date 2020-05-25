@@ -19,7 +19,7 @@ public class CrawlerPigIndex extends Model<CrawlerPigIndex> {
 
     private String change;
 
-    private String name;
+    private String region;
 
     private String bookingPrice;
 

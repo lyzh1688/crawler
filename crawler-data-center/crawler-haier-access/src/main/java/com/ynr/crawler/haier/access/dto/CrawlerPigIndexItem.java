@@ -13,7 +13,7 @@ public class CrawlerPigIndexItem {
     private String d;
     private String cr;
     private String c;
-    private String n;
+    private String r;
     private String bp;
     private String tp;
     private String atw;
