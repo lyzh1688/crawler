@@ -1,4 +1,7 @@
 const puppeteer = require('puppeteer');
+var conf = require('./../config/config');
+var pool = conf.pool;
+var save = require('./../save/save')
 
 ;(async()=> {
     
@@ -11,9 +14,8 @@ const puppeteer = require('puppeteer');
 	
 	page.setDefaultNavigationTimeout(0)
 	
+	await page.goto('https://www.qts-railway.com.cn:8443/procer/voluntarilylist.htm');
 	await page.addScriptTag({url: 'https://code.jquery.com/jquery-3.2.1.min.js'})
-	  
-	//await page.goto('https://www.qts-railway.com.cn:8443/procer/voluntarilylist.htm');
 
 
   
@@ -23,10 +25,23 @@ const puppeteer = require('puppeteer');
 	//1、设置页数，点击翻页
 	//2、解析页面
 	
-	//let val = $(".pagination-num").val(10);
-	//await page.keyboard.press('Enter');
-	await queryPageUrlPost(page,'https://www.qts-railway.com.cn:8443/procer/voluntarilylist.htm');
 	
+	let pageNum = await queryPageNum(page)
+	console.log('pageNum: ' + pageNum);
+
+	for( var i = 0;i<692;i++){
+		console.log('page index: ' + i);
+		let array = await parseUI(page);	
+		
+	 
+	 
+	  pool.getConnection(function (err, connection) {
+                  save.qts({"connection": connection, "res": array}, function () {
+                       console.log('insert success')
+                    })
+                })
+		
+	}
 	
  
 
@@ -35,41 +50,17 @@ const puppeteer = require('puppeteer');
 
 })()
 /**********************************
-*    翻页
+*    查询页数
 ***********************************/
-async function queryPageUrl(page) {
+async function queryPageNum(page) {
 	
 	return await page.evaluate(async ()=>{
-		var itemLength = $('.datagrid-pager.pagination table tbody tr td').length;
-		console.log(itemLength)
-		var tdUrl = $('.datagrid-pager.pagination table tbody tr td').eq[8]
-		for( var i = 0;i<itemLength;i++){
-			console.log('--------: ' + JSON.stringify($('.datagrid-pager.pagination table tbody tr td').eq[i]))
-		}
-		console.log('url: ' + JSON.stringify(tdUrl))
-		
-		var s = $('.l-btn.l-btn-small.l-btn-plain');
-		console.log('sssssssssss: ' + JSON.stringify(s))
-		return tdUrl;
+		var pageNum = $('.datagrid-pager.pagination table tbody tr td').eq(7).find("span").text().replace('共','').replace('页','')	
+		return pageNum;
 	});
 }
 
-async function queryPageUrlPost(page,url) {
-	await page.setRequestInterception(true);
-    page.once('request', interceptedRequest => {
 
-        var data = {
-            'method': 'POST',
-            'postData': 'page=691&rows=20&sort=SN&order=asc'
-        };
-
-        interceptedRequest.continue(data);
-		page.setRequestInterception(false);
-    });
-    const response = await page.goto('https://www.qts-railway.com.cn:8443/procer/voluntarilydata.html');     
-    let responseBody = await response.text();
-	console.log('responseBody: ' + responseBody)
-}
 /**********************************
 *    解析页面数据
 ***********************************/
@@ -122,12 +113,17 @@ async function parseUI(page) {
 			items.push(data)			
 			
 		}
+		
+		$('.datagrid-pager.pagination table tbody tr td a')[2].click()
+			
+		console.log('click')
+		
 		return items;
 	});
 	}catch(err){
 		console.log(err)
 	}
 
-	console.log('result: ' + JSON.stringify(res))
+	//console.log('result: ' + JSON.stringify(res))
 	return res;
 }

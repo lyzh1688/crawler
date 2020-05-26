@@ -1,9 +1,12 @@
 const puppeteer = require('puppeteer');
+var conf = require('./../config/config');
+var pool = conf.pool;
+var save = require('./../save/save');
 
 (async () => {  
 
  const browser = await puppeteer.launch({
-        executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+        executablePath: 'C://Users//Administrator//AppData//Local//Google//Chrome//Application//chrome.exe',
         headless: false
       });
 
@@ -63,7 +66,7 @@ for(var z=0;z<companyNameList.length;z++){
 			//console.log(businessInfo);
 		}
 
-		console.log(companySearchResultObjectList);
+		console.log('companySearchResultObjectList: {}' + JSON.stringify(companySearchResultObjectList));
 	}catch(err){
 	  console.log(err)
 	  console.log(err.message);

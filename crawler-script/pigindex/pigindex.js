@@ -13,18 +13,27 @@ var save = require('./../save/save')
 	const page = await browser.newPage();
 	page.setDefaultNavigationTimeout(0)
 	
+	
 	console.log('start')
 	
+	let array = []
 	for( var id = 0;id<8;id++){
-	 let array =　await queryPageUrlPost(page,id);
+	 let data =await queryPageUrlPost(page,id);
+	 
+	 array.push(data)
+	 
+	 
+	 
 	  pool.getConnection(function (err, connection) {
                     save.pigIndex({"connection": connection, "res": array}, function () {
-                        console.log('insert success')
+                       console.log('insert success')
                     })
                 })
 	 
 	 
 	}
+	
+	console.log('array: ' + JSON.stringify(array))
 
 	console.log('end')
 	await browser.close();
@@ -36,115 +45,69 @@ async function queryPageUrlPost(page,id) {
 		console.log("id:  " + id)
 
 		let body = await page.goto('https://hqb.nxin.com/pigindex/getPigIndex.shtml?regionId=' + id);
-
 		await page.addScriptTag({url: 'https://code.jquery.com/jquery-3.2.1.min.js'})
 		
-				
-		let array = await page.evaluate(async ()=>{
-			
-				
-			var res = $(".f72.red.clear").text();
-			
-			console.log('res: ' + res)
-			console.log('res length: ' + res.length)
-					
-			if(res.data == null || res.data.length == 0 || res.data == undefined ){
-			console.log('没有数据')
-			return;
-			}
-			let rst = [];
-
-			for( var i = 0;i<res.data.length;i++){	
 		
-			if(i==0){
-				continue;
-			}
+				
+		let data = await page.evaluate(async ()=>{
 			let data = {}
-			let tmpData = res.data[i];
+			
+			var dateData =  $(".f18.white.arial.p_sj.fl").text();			
+			var dateDataHtml =  $(".f18.white.arial.p_sj.fl").html()
+			var y=dateDataHtml.indexOf('>'); 
+			var date = dateDataHtml.substr(y + 1,12).replace('-','').replace('-','')
 			
 			
-			
-				
-			data.index = tmpData[1]
-				
-			//data.change_rate = ((tmpData[1] - res.data[i-1][1])/res.data[i-1][1]).toFixed(3)
-				
-			//data.change = (tmpData[1]- res.data[i-1][1]).toFixed(3)
-				
-			data.name = name
-				
-			data.booking_price = tmpData[5]
-				
-			data.trade_price = tmpData[6]
-				
-			if(tmpData.length==8){
-				data.avg_trade_weight = tmpData[7]
-			}else{
-				data.avg_trade_weight = '--'
-			}
-				
-				
+			console.log('dateData: ' + date)
+			data.data_date = date
 			
 			
-			var datetimeType = "";  
-		    var date = new Date();  
-		    date.setTime(tmpData[0]);  
-		  
-			var month = "";  
-		    month = date.getMonth() + 1;   
-		    if(month<10){  
-		        month = "0" + month;  
-		    }  
-			var day = "";  
-		    day = date.getDate();  
-		    if(day<10){  
-		        day = "0" + day;  
-		    }  
-			datetimeType+= date.getFullYear();   //年  
-		    datetimeType+= month; //月   
-		    datetimeType+= day;   //日  
-			data.data_date = datetimeType
-		
-			rst.push(data)
+			var indexData =  $(".f72.red.clear").text();			
+			var indexDataHtml =  $(".f72.red.clear").html()
 			
-		}
-
-		return rst;
-		});
-		
-		
-		for( var i = 0;i<array.length;i++){
-			if(id == 0){
-				array[i].name = '全国'
+			if(indexDataHtml == undefined){
+				indexDataHtml = $(".f72.green.clear").html()
 			}
-			if(id == 1){
-				array[i].name = '东北地区'
-			}
-			if(id == 2){
-				array[i].name = '华北地区'
-			}
-			if(id == 3){
-				array[i].name = '西北地区'
-			}
-			if(id == 4){
-				array[i].name = '华中地区'
-			}
-			if(id == 5){
-				array[i].name = '华东地区'
-			}
-			if(id == 6){
-				array[i].name = '华南地区'
-			}
-			if(id == 7){
-				array[i].name = '西南地区'
-			}
-		
-		}
-		
-		console.log(JSON.stringify(array))
-		
-		return array;
-		
+			
+			console.log('indexDataHtml: ' + indexDataHtml)
+			
+			var x=indexDataHtml.indexOf('<'); 
+			var inx = indexDataHtml.substr(0,15)
+			var index = inx.substr(9,inx.length)
+			
+			
+			console.log('index: ' + index)
+			
+			var changeData = $(".f18.fr.s_zs p");
+			data.index = index
+			data.change = changeData.eq(0).html();
+			data.change_rate = changeData.eq(1).html();
+			
+				var td0 = $("table").find("tr").find("td").eq(0).find("p").eq(1).text();
+				var td1 = $("table").find("tr").find("td").eq(1).find("p").eq(1).text();
+				var td2 = $("table").find("tr").find("td").eq(2).find("p").eq(1).text();
+				var td3 = $("table").find("tr").find("td").eq(3).find("p").eq(1).text();
+				data.booking_price = td1
+				data.trade_price = td2
+				data.avg_trade_weight = td3
+				
+						console.log('td: ' + td0)
+						console.log('td: ' + td1)
+						console.log('td: ' + td2)
+						console.log('td: ' + td3)
+						
+				var region = $(".change_area span").text().replace('（','').replace('）','');			
+				data.region = region
+			
+			console.log('data: ' + JSON.stringify(data))
+			
+					return data;
+					
+		})
+				return data	
+					
+					
+				
 		
 		
 		
