@@ -12,14 +12,13 @@ var save = require('./../save/save');
 
 
 
-let companyNameList = ['大众','特斯拉','一汽解放','中国重汽','东风商用车'];
+let companyNameList = ['特斯拉','大众','一汽解放','中国重汽','东风商用车'];
 
-for(var z=0;z<companyNameList.length;z++){
+let pageList = [10,100,500,1000,10000];
 
-	try{
-  
 
-		const page = await browser.newPage()  
+	const page = await browser.newPage()  
+		await page.addScriptTag({path: 'D://项目//爬虫//crawler-script//jquery-3.2.1/jquery-3.2.1.min.js'})
 		await page.goto('http://i.gasgoo.com/login.aspx?return=http://i.gasgoo.com/');  
 
 		/***********************************
@@ -27,11 +26,41 @@ for(var z=0;z<companyNameList.length;z++){
 		***********************************/
 		await login(page);
 		await page.waitFor(4000);
+		
 
+for(var z=0;z<companyNameList.length;z++){
+
+	try{
+
+	
+		let maxPageNum = 0;
+		for(var a=0;a<pageList.length;a++){
+			
+			maxPageNum = await getPageNum(page,companyNameList[z],pageList[a])
+			
+			if(maxPageNum == null){
+				continue; 
+			}else{
+				break;
+			}
+			
+		}
+		
+		console.log("companyName: " + companyNameList[z] + "  " + maxPageNum)
+		
+		
+		
 		/***********************************
 		*    获取所有分页的url
 		***********************************/
-		let urlList = await getUrlByCompany(page,companyNameList[z]); 
+		var baseUrl = "http://i.gasgoo.com/supplier/search.aspx?skey=&tc="+companyNameList[z]+"&export=-1&page=";
+		
+		var urlList = new Array();
+		for(var i=1;i<=maxPageNum;i++){
+			console.log("maxPageNum: " + maxPageNum + " i: " + i);
+			urlList.push(baseUrl+i);
+		}
+		
 		console.log(urlList);
 
 		/**********************************
@@ -43,11 +72,10 @@ for(var z=0;z<companyNameList.length;z++){
 			//console.log(companyList);
 			totalCompanyList= totalCompanyList.concat(companyList);
 		}
-
 		/***********************************
 		*    退出登录
 		************************************/
-		await page.goto('http://i.gasgoo.com/logout.aspx');
+		//await page.goto('http://i.gasgoo.com/logout.aspx');
 		/***********************************
 		*    获取每个公司详情
 		************************************/
@@ -58,15 +86,30 @@ for(var z=0;z<companyNameList.length;z++){
 			let companyBrief = totalCompanyList[n].split("####@@@@")[0];
 			let companyUrl = totalCompanyList[n].split("####@@@@")[1];
 			let businessInfo = await getCompanyBusinessInfo(page,companyUrl);
-			let companyObject = new Object();
-			companyObject.brief = companyBrief;
-			companyObject.detailUrl = companyUrl;
-			companyObject.businessInfo = businessInfo;
-			companySearchResultObjectList.push(companyObject);
+			let array = []
+			
+			for(var p=0;p<businessInfo.attr.length;p++){
+				let item = {}
+				item.search_target = companyNameList[z]
+				item.company = businessInfo.company
+				item.attribute =  businessInfo.attr[p].key
+				item.attr_value =  businessInfo.attr[p].value
+				array.push(item)
+			}
+			
+			
+			
+			
+			await  pool.getConnection(function (err, connection) {
+                  save.gasgoo({"connection": connection, "res": array}, function () {
+                       console.log('insert success')
+                    })
+                })
+		
 			//console.log(businessInfo);
 		}
 
-		console.log('companySearchResultObjectList: {}' + JSON.stringify(companySearchResultObjectList));
+		
 	}catch(err){
 	  console.log(err)
 	  console.log(err.message);
@@ -99,19 +142,35 @@ async function login(page){
 }
 
 /***********************************
+*    获取配套企业页数
+***********************************/
+async function getPageNum(page,companyName,pageNum){
+	await page.goto("http://i.gasgoo.com/supplier/search.aspx?skey=&tc="+companyName+"&export=-1&page=" + pageNum);
+	let maxPageNum = page.evaluate(async ()=>{
+		let next = $('.next').text()
+		
+		if( next == '>>' ){
+			return null;
+		}
+		
+		return  $('.current').text();
+				
+	})
+	return maxPageNum;
+}	
+
+
+/***********************************
 *    获取所有分页的url
 ***********************************/
-async function getUrlByCompany(page,companyName){
+async function getUrlByCompany(page,companyName,maxPageNum){
 	await page.goto("http://i.gasgoo.com/supplier/search.aspx?skey=&tc="+companyName+"&export=-1");
 
-	let resultList = page.evaluate(async (companyName)=>{
+	let resultList = page.evaluate(async (companyName,maxPageNum)=>{
 		var baseUrl = "http://i.gasgoo.com/supplier/search.aspx?skey=&tc="+companyName+"&export=-1&page=";
-		//判断是否有分页
-		var pageSize = document.querySelectorAll("#rpSearchResultList a").length;
-		console.log("分页"+pageSize);
-		//获取所有分页的Url
+		
 		var urlList = new Array();
-		for(var i=1;i<pageSize+1;i++){
+		for(var i=1;i<maxPageNum+1;i++){
 			urlList.push(baseUrl+i);
 		}
 		//console.log(urlList);	
@@ -149,10 +208,45 @@ async function getCompanyBusinessInfo(page,url){
 
 	await page.goto(url);
 	const businessInfo=page.evaluate(async ()=>{
-		return  document.querySelector(".newBussiness").innerText;		
+		let businessInfo = {};
+		let atts = [];
+		let company = $(".companyName").eq(0).text();
+		let idx = company.indexOf(':');
+		let companyName = company.substr(idx+1,company.length)
+		
+		
+		let trLength = $(".newBussiness").eq(0).find("table tbody tr").length
+		console.log("trLength: " + trLength);
+		for(var i=0;i<trLength;i++){
+			
+			let tdLength =  $(".newBussiness").eq(0).find("table tbody tr").eq(i).find("td").length;
+			let halfTdLength = tdLength/2;
+			for(var j=0;j<halfTdLength;j++){
+				let attr = {}
+				let ix = j*2;
+				let tdKey = $(".newBussiness").eq(0).find("table tbody tr").eq(i).find("td").eq(ix).text();
+				let tdValue =  $(".newBussiness").eq(0).find("table tbody tr").eq(i).find("td").eq(ix + 1).text();
+				attr.key = tdKey;
+				attr.value = tdValue;
+				atts.push(attr)
+			}
+
+
+			
+			
+		}
+		
+		businessInfo.company = companyName;
+		businessInfo.attr = atts;
+		
+		console.log("businessInfo: " + JSON.stringify(businessInfo))
+		
+		
+		
+		return  businessInfo;		
 	});
 
-	console.log(businessInfo);
+	//console.log(businessInfo);
 	return businessInfo;
 
 }

@@ -135,14 +135,19 @@ exports.gasgoo = function(list,callback){
 		var curMonth =  datetimeType;
 		    datetimeType+= day;   //日  
 		var batchId = datetimeType
-        var data = [batchId,curMonth,item.search_target,item.company,item.attribute,item.attr_value]				
-                connection.query('insert into crawler_gasgoo_result(batch_id,month,search_target,company,attribute,attr_value,update_date) values(?,?,?,?,?,?,?,now()) on DUPLICATE KEY UPDATE attr_value=VALUES(attr_value),update_date=now()',data,function(err,result){
+		
+		
+			var data = [batchId,curMonth,item.search_target,item.company,item.attribute,item.attr_value]
+			//console.log("data: " + JSON.stringify(data))			
+                connection.query('insert into crawler_gasgoo_result(batch_id,month,search_target,company,attribute,attr_value,update_date) values(?,?,?,?,?,?,now()) on DUPLICATE KEY UPDATE attr_value=VALUES(attr_value),update_date=now()',data,function(err,result){
                     if(err){
-                        console.log(batchId,curMonth,item.search_target,item.company,item.attribute,item.attr_value)
+                        console.log(batchId,curMonth,item.search_target,item.company)
                         console.log('gasgoo',err)
                     }
                     cb();
                 });
+				
+		
     },callback);
 }
 

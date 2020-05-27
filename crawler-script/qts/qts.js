@@ -15,7 +15,7 @@ var save = require('./../save/save')
 	page.setDefaultNavigationTimeout(0)
 	
 	await page.goto('https://www.qts-railway.com.cn:8443/procer/voluntarilylist.htm');
-	await page.addScriptTag({url: 'https://code.jquery.com/jquery-3.2.1.min.js'})
+		await page.addScriptTag({path: 'D://项目//爬虫//crawler-script//jquery-3.2.1/jquery-3.2.1.min.js'})
 
 
   
@@ -30,7 +30,7 @@ var save = require('./../save/save')
 	console.log('pageNum: ' + pageNum);
 
 	for( var i = 0;i<692;i++){
-		console.log('page index: ' + i);
+		//console.log('page index: ' + i);
 		let array = await parseUI(page);	
 		
 	 

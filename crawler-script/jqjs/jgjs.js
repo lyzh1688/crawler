@@ -13,7 +13,7 @@ var save = require('./../save/save')
 	const page = await browser.newPage();
 	page.setDefaultNavigationTimeout(0)
 	
-    await page.addScriptTag({url: 'https://code.jquery.com/jquery-3.2.1.min.js'})
+    	await page.addScriptTag({path: 'D://项目//爬虫//crawler-script//jquery-3.2.1/jquery-3.2.1.min.js'})
 	
 	
 	console.log('start');
