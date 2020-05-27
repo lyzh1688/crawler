@@ -139,7 +139,7 @@ public class CrawlerDataEndpoint {
         CrawlerGasgooItem crawlerGasgooItem = new CrawlerGasgooItem();
         crawlerGasgooItem.setItems(crawlerGasgooCompanyList);
         crawlerGasgooItem.setSearchTarget(searchTarget);
-        crawlerGasgooItem.setTotalCount((int) totalCnt);
+        crawlerGasgooItem.setTotalCnt((int) totalCnt);
 
         return new CrawlerGasgooResponse(crawlerGasgooItem);
     }
