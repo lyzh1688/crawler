@@ -5,10 +5,13 @@ var save = require('./../save/save');
 
 (async () => {  
 
- const browser = await puppeteer.launch({
-        executablePath: 'C://Users//Administrator//AppData//Local//Google//Chrome//Application//chrome.exe',
-        headless: false
-      });
+    //const browser = await puppeteer.launch({
+    //    executablePath: '/opt/haier/crawler-script/node_modules/_puppeteer@3.1.0@puppeteer/.local-chromium/linux-756035/chrome-linux/chrome',
+    //    headless: false
+    //  });
+	
+	  const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
+
 
 
 
@@ -18,7 +21,7 @@ let pageList = [10,100,500,1000,10000];
 
 
 	const page = await browser.newPage()  
-		await page.addScriptTag({path: 'D://项目//爬虫//crawler-script//jquery-3.2.1/jquery-3.2.1.min.js'})
+		await page.addScriptTag({path: '/opt/haier/crawler-script/jquery-3.2.1/jquery-3.2.1.min.js'})
 		await page.goto('http://i.gasgoo.com/login.aspx?return=http://i.gasgoo.com/');  
 
 		/***********************************

@@ -5,10 +5,12 @@ var save = require('./../save/save')
 
 ;(async()=> {
     
-    let browser = await puppeteer.launch({
-        headless: false,
-        executablePath: 'C://Users//Administrator//AppData//Local//Google//Chrome//Application//chrome.exe'
-    })
+   // let browser = await puppeteer.launch({
+   //     headless: false,
+    //    executablePath: '/opt/haier/crawler-script/node_modules/_puppeteer@3.1.0@puppeteer/.local-chromium/linux-756035/chrome-linux/chrome'
+   // })
+     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
+
 	
 	const page = await browser.newPage();
 	page.setDefaultNavigationTimeout(0)
@@ -45,7 +47,7 @@ async function queryPageUrlPost(page,id) {
 		console.log("id:  " + id)
 
 		let body = await page.goto('https://hqb.nxin.com/pigindex/getPigIndex.shtml?regionId=' + id);
-			await page.addScriptTag({path: 'D://项目//爬虫//crawler-script//jquery-3.2.1/jquery-3.2.1.min.js'})
+			await page.addScriptTag({path: '/opt/haier/crawler-script/jquery-3.2.1/jquery-3.2.1.min.js'})
 		
 		
 				
