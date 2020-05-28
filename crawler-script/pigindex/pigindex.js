@@ -16,7 +16,7 @@ var save = require('./../save/save')
 	page.setDefaultNavigationTimeout(0)
 	
 	
-	console.log('start')
+	console.log('start ； ' + new Date());
 	
 	let array = []
 	for( var id = 0;id<8;id++){
@@ -37,7 +37,7 @@ var save = require('./../save/save')
 	
 	console.log('array: ' + JSON.stringify(array))
 
-	console.log('end')
+	console.log('end ； ' + new Date());
 	await browser.close();
 
 })()
@@ -98,7 +98,7 @@ async function queryPageUrlPost(page,id) {
 						console.log('td: ' + td2)
 						console.log('td: ' + td3)
 						
-				var region = $(".change_area span").text().replace('（','').replace('）','');			
+				var region = $(".change_area span").text().replace('（','').replace('）','').replace(' ','');			
 				data.region = region
 			
 			console.log('data: ' + JSON.stringify(data))

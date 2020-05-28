@@ -7,7 +7,7 @@ var async = require('async');
 exports.pigIndex = function(list,callback){
     console.log('save pigIndex')
     var connection = list.connection
-    async.forEach(list.res,function(item,cb){
+    list.res.forEach(function(item){
         console.log('save pigIndex',JSON.stringify(item));
 		var datetimeType = "";  
 		    var date = new Date();   
@@ -32,7 +32,6 @@ exports.pigIndex = function(list,callback){
                         console.log(batchId,item.index,item.data_date,item.index,item.change_rate,item.change,item.name,item.booking_price,item.trade_price,item.avg_trade_weight)
                         console.log('pigIndex',err)
                     }
-                    cb();
                 });
     },callback);
 }
@@ -43,7 +42,7 @@ exports.pigIndex = function(list,callback){
 exports.jgjc = function(list,callback){
     console.log('save jgjc')
     var connection = list.connection
-    async.forEach(list.res,function(item,cb){
+    list.res.forEach(function(item){
         console.log('save jgjc',JSON.stringify(item));
 			var datetimeType = "";  
 		    var date = new Date();   
@@ -62,13 +61,12 @@ exports.jgjc = function(list,callback){
 		    datetimeType+= month; //月   
 		    datetimeType+= day;   //日  
 		var batchId = datetimeType
-        var data = [batchId,item.data_date,item.product_type,item.stat_type,item.raw_price,item.fodder_price,item.rate,item.balance,item.profit_count]				
-                connection.query('insert into crawler_jgjc_result(batch_id,data_date,product_type,stat_type,raw_price,fodder_price,rate,balance,profit_count,update_date) values(?,?,?,?,?,?,?,?,?,now()) on DUPLICATE KEY UPDATE raw_price=VALUES(raw_price),fodder_price=VALUES(fodder_price),rate=VALUES(rate),balance=VALUES(balance),profit_count=VALUES(profit_count),update_date=now()',data,function(err,result){
+        var data = [batchId,item.data_date,item.product_type,item.stat_type,item.raw_price,item.fodder_price,item.rate,item.balance,item.profit_count,item.data_date]				
+                connection.query('insert into crawler_jgjc_result(batch_id,data_date,product_type,stat_type,raw_price,fodder_price,rate,balance,profit_count,release_date,update_date) values(?,?,?,?,?,?,?,?,?,?,now()) on DUPLICATE KEY UPDATE raw_price=VALUES(raw_price),fodder_price=VALUES(fodder_price),rate=VALUES(rate),balance=VALUES(balance),profit_count=VALUES(profit_count),release_date=VALUES(release_date),update_date=now()',data,function(err,result){
                     if(err){
-                        console.log(batchId,item.index,item.data_date,item.index,item.change_rate,item.change,item.name,item.booking_price,item.trade_price,item.avg_trade_weight)
+                        console.log(batchId,item.index,item.data_date,item.index,item.change_rate,item.change,item.name,item.booking_price,item.trade_price,item.avg_trade_weight,item.data_date)
                         console.log('jgjc',err)
                     }
-                    cb();
                 });
     },callback);
 }
@@ -79,7 +77,7 @@ exports.jgjc = function(list,callback){
 exports.qts = function(list,callback){
     console.log('save qts')
     var connection = list.connection
-    async.forEach(list.res,function(item,cb){
+     list.res.forEach(function(item){
         console.log('save qts: ',JSON.stringify(item));
 			var datetimeType = "";  
 		    var date = new Date();   
@@ -105,7 +103,7 @@ exports.qts = function(list,callback){
                         console.log(batchId,item.month,item.company,item.prodType,item.rule,item.unit,item.specs,item.certificationID,item.certDate,item.expireDate,item.status,item.isCancled)
                         console.log('qts',err)
                     }
-                    cb();
+                   
                 });
     },callback);
 }

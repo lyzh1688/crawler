@@ -17,7 +17,8 @@ var save = require('./../save/save')
     	await page.addScriptTag({path: '/opt/haier/crawler-script/jquery-3.2.1/jquery-3.2.1.min.js'})
 	
 	
-	console.log('start');
+	
+	console.log('start ； ' + new Date());
 	
 	//提供所有的页码
 	//for( var i = 0;i<16;i++){	
@@ -29,8 +30,8 @@ var save = require('./../save/save')
                 })
 	//}
 
-	console.log('end')
-	await browser.close();
+	console.log('end； ' + new Date());
+	//await browser.close();
 
 })()
 
@@ -46,6 +47,7 @@ async function queryPage(page,j) {
 			
 			for( var k = 0;k<data.length;k++){
 				let tmpData = data[k];
+				tmpData.release_date = data_date
 				tmpData.data_date = data_date
 				dataList.push(tmpData)
 				console.log('data: ' + JSON.stringify(tmpData))
@@ -90,6 +92,15 @@ async function parsePriceDetail(page,url) {
 	try{
 	await page.goto(url); 
 	res = await page.evaluate(async ()=>{
+		
+		//let div = $('#zoom');
+		//let dataDate = $('#zoom div p').eq(3).text().replace('年','').replace('月','').replace('日','');
+		
+		
+		//console.log("dataDate: " + dataDate)
+		
+		
+		
 		var items = []
 		var tableArr = $("table");
 		for( var i = 0;i<tableArr.length;i++){
@@ -105,6 +116,9 @@ async function parsePriceDetail(page,url) {
 			}
 			var tdLength = $("table").eq(i).find("tr").length;
 			for( var j = 0;j<tdLength;j++){	
+			
+			var statData = {};
+			statData.product_type = data.product_type
 				var tr = $("table").eq(i).find("tr");
 				var tdArr = tr.eq(j);
 				
@@ -118,22 +132,25 @@ async function parsePriceDetail(page,url) {
 				var balance = tdArr.find("td").eq(4).find('p').find('span').text();//猪料比价平衡点
 				var profit_count = tdArr.find("td").eq(5).find('p').find('span').text();//预期盈利
 				
-				data.raw_price = raw_price
-				data.fodder_price = fodder_price
-				data.rate = rate
-				data.balance = balance
-				data.profit_count = profit_count
+				statData.raw_price = raw_price
+				statData.fodder_price = fodder_price
+				statData.rate = rate
+				statData.balance = balance
+				statData.profit_count = profit_count
 				if(data_date.charAt(0) == '本'){
-					data.stat_type = 'curWeek'
+					statData.stat_type = 'curWeek'
 				}
 				if(data_date.charAt(0) == '上'){
-					data.stat_type = 'lastWeek'
+					statData.stat_type = 'lastWeek'
 				}
 				if(data_date.charAt(0) == '环'){
-					data.stat_type = 'mom'
+					statData.stat_type = 'mom'
 				}
+				
+				//data.data_date = dataDate
+				items.push(statData)
 			}
-			items.push(data)
+			
 		}
 		return items;
 	});

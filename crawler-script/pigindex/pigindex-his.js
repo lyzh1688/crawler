@@ -15,7 +15,7 @@ var save = require('./../save/save')
 	const page = await browser.newPage();
 	page.setDefaultNavigationTimeout(0)
 	
-	console.log('start')
+	console.log('start ； ' + new Date());
 	
 	for( var id = 0;id<8;id++){
 	 let array =　await queryPageUrlPost(page,id);
@@ -29,7 +29,7 @@ var save = require('./../save/save')
 	}
 	
 
-	console.log('end')
+	console.log('end ； ' + new Date());
 	await browser.close();
 
 })()
@@ -43,6 +43,7 @@ async function queryPageUrlPost(page,id) {
 			await page.addScriptTag({path: '/opt/haier/crawler-script/jquery-3.2.1/jquery-3.2.1.min.js'})
 		
 				
+			
 		let array = await page.evaluate(async ()=>{
 			
 				
@@ -73,12 +74,12 @@ async function queryPageUrlPost(page,id) {
 				
 			data.name = name
 				
-			data.booking_price = tmpData[5]
+			data.booking_price = tmpData[5] + '元/公斤'
 				
-			data.trade_price = tmpData[6]
+			data.trade_price = tmpData[6] + '元/公斤'
 				
 			if(tmpData.length==8){
-				data.avg_trade_weight = tmpData[7]
+				data.avg_trade_weight = tmpData[7] + 'kg'
 			}else{
 				data.avg_trade_weight = '--'
 			}
@@ -115,28 +116,28 @@ async function queryPageUrlPost(page,id) {
 		
 		for( var i = 0;i<array.length;i++){
 			if(id == 0){
-				array[i].name = '全国'
+				array[i].region = '全国'
 			}
 			if(id == 1){
-				array[i].name = '东北地区'
+				array[i].region = '东北地区'
 			}
 			if(id == 2){
-				array[i].name = '华北地区'
+				array[i].region = '华北地区'
 			}
 			if(id == 3){
-				array[i].name = '西北地区'
+				array[i].region = '西北地区'
 			}
 			if(id == 4){
-				array[i].name = '华中地区'
+				array[i].region = '华中地区'
 			}
 			if(id == 5){
-				array[i].name = '华东地区'
+				array[i].region = '华东地区'
 			}
 			if(id == 6){
-				array[i].name = '华南地区'
+				array[i].region = '华南地区'
 			}
 			if(id == 7){
-				array[i].name = '西南地区'
+				array[i].region = '西南地区'
 			}
 		
 		}

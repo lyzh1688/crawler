@@ -20,17 +20,18 @@ var save = require('./../save/save')
 
 
   
+
 	
-	console.log('start');
+	console.log('start ； ' + new Date());
 	
 	//1、设置页数，点击翻页
 	//2、解析页面
 	
 	
-	let pageNum = await queryPageNum(page)
-	console.log('pageNum: ' + pageNum);
-
-	for( var i = 0;i<692;i++){
+	//let pageNum = await queryPageNum(page)
+	//console.log('pageNum: ' + pageNum);
+//
+	for( var i = 0;i<700;i++){
 		//console.log('page index: ' + i);
 		let array = await parseUI(page);	
 		
@@ -41,13 +42,13 @@ var save = require('./../save/save')
                        console.log('insert success')
                     })
                 })
-		
+			await page.waitFor(60000);
 	}
 	
  
 
-	console.log('end')
-	//await browser.close();
+	console.log('end； ' + new Date());
+//	await browser.close();
 
 })()
 /**********************************
@@ -56,7 +57,10 @@ var save = require('./../save/save')
 async function queryPageNum(page) {
 	
 	return await page.evaluate(async ()=>{
+		var ss = $('.datagrid-pager.pagination table tbody tr td').eq(7).find("span").text()
+		console.log('ss: ' +ss)
 		var pageNum = $('.datagrid-pager.pagination table tbody tr td').eq(7).find("span").text().replace('共','').replace('页','')	
+		console.log('pageNum: ' +pageNum)
 		return pageNum;
 	});
 }
@@ -116,7 +120,8 @@ async function parseUI(page) {
 		}
 		
 		$('.datagrid-pager.pagination table tbody tr td a')[2].click()
-			
+		console.log('result: ' + JSON.stringify(items))
+		
 		console.log('click')
 		
 		return items;
@@ -124,7 +129,6 @@ async function parseUI(page) {
 	}catch(err){
 		console.log(err)
 	}
-
 	//console.log('result: ' + JSON.stringify(res))
 	return res;
 }
