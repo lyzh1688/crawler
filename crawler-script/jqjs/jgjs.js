@@ -29,9 +29,8 @@ var save = require('./../save/save')
                     })
                 })
 	//}
-
-	console.log('end； ' + new Date());
-	//await browser.close();
+console.log('end； ' + new Date());
+	await browser.close();
 
 })()
 
@@ -187,6 +186,8 @@ async function parsePriceDetail(page,url) {
 	//console.log('result: ' + JSON.stringify(res))
 	return res;
 }
+
+
 
 
 
