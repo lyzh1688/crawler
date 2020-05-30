@@ -33,19 +33,18 @@ var save = require('./../save/save')
 //
 	for( var i = 0;i<700;i++){
 		//console.log('page index: ' + i);
-		let array = await parseUI(page);	
+		let array = await parseUI(page,pool,save);	
 		
 	 
 	 
-	  pool.getConnection(function (err, connection) {
-                  save.qts({"connection": connection, "res": array}, function () {
-                       console.log('insert success')
-                    })
-                })
-			await page.waitFor(60000);
+	
+				
+				
+			await page.waitFor(90000);
 	}
 	
  
+
 
 	console.log('end； ' + new Date());
 //	await browser.close();
@@ -69,7 +68,7 @@ async function queryPageNum(page) {
 /**********************************
 *    解析页面数据
 ***********************************/
-async function parseUI(page) {
+async function parseUI(page,pool,save) {
 	let res;
 	try{
 	res = await page.evaluate(async ()=>{
@@ -119,8 +118,10 @@ async function parseUI(page) {
 			
 		}
 		
+		
+		
 		$('.datagrid-pager.pagination table tbody tr td a')[2].click()
-		console.log('result: ' + JSON.stringify(items))
+		//console.log('result: ' + JSON.stringify(items))
 		
 		console.log('click')
 		
@@ -129,6 +130,14 @@ async function parseUI(page) {
 	}catch(err){
 		console.log(err)
 	}
-	//console.log('result: ' + JSON.stringify(res))
+	
+	pool.getConnection(function (err, connection) {
+                  save.qts({"connection": connection, "res": res}, function () {
+                       console.log('insert success')
+					   
+                    })
+          })
+	
+	//console.log('insert success: ' + JSON.stringify(res))
 	return res;
 }

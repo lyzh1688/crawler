@@ -31,9 +31,13 @@ exports.pigIndex = function(list,callback){
                     if(err){
                         console.log(batchId,item.index,item.data_date,item.index,item.change_rate,item.change,item.name,item.booking_price,item.trade_price,item.avg_trade_weight)
                         console.log('pigIndex',err)
-                    }
+                    }else{
+						console.log(result)
+						console.log('insert success')
+					}
                 });
     },callback);
+	connection.release()
 }
 
 
@@ -61,24 +65,29 @@ exports.jgjc = function(list,callback){
 		    datetimeType+= month; //月   
 		    datetimeType+= day;   //日  
 		var batchId = datetimeType
-        var data = [batchId,item.data_date,item.product_type,item.stat_type,item.raw_price,item.fodder_price,item.rate,item.balance,item.profit_count,item.data_date]				
+        var data = [batchId,item.data_date,item.product_type,item.stat_type,item.raw_price,item.fodder_price,item.rate,item.balance,item.profit_count,item.release_date]				
                 connection.query('insert into crawler_jgjc_result(batch_id,data_date,product_type,stat_type,raw_price,fodder_price,rate,balance,profit_count,release_date,update_date) values(?,?,?,?,?,?,?,?,?,?,now()) on DUPLICATE KEY UPDATE raw_price=VALUES(raw_price),fodder_price=VALUES(fodder_price),rate=VALUES(rate),balance=VALUES(balance),profit_count=VALUES(profit_count),release_date=VALUES(release_date),update_date=now()',data,function(err,result){
                     if(err){
-                        console.log(batchId,item.index,item.data_date,item.index,item.change_rate,item.change,item.name,item.booking_price,item.trade_price,item.avg_trade_weight,item.data_date)
+                        console.log(batchId,item.index,item.data_date,item.index,item.change_rate,item.change,item.name,item.booking_price,item.trade_price,item.avg_trade_weight,item.release_date)
                         console.log('jgjc',err)
-                    }
+                    }else{
+						console.log(result)
+						console.log('insert success')
+					}
                 });
     },callback);
+	connection.release()
 }
 
 
 
 //把qts存入数据库
 exports.qts = function(list,callback){
+	try{
     console.log('save qts')
     var connection = list.connection
      list.res.forEach(function(item){
-        console.log('save qts: ',JSON.stringify(item));
+       // console.log('save qts: ',JSON.stringify(item));
 			var datetimeType = "";  
 		    var date = new Date();   
 		  
@@ -100,12 +109,19 @@ exports.qts = function(list,callback){
         var data = [batchId,curMonth,item.company,item.prodType,item.rule,item.unit,item.specs,item.certificationID,item.certDate,item.expireDate,item.status,item.isCancled]				
                 connection.query('insert into crawler_qts_result(batch_id,month,company,prodType,rule,unit,specs,certificationID,certDate,expireDate,status,isCancled,update_date) values(?,?,?,?,?,?,?,?,?,?,?,?,now()) on DUPLICATE KEY UPDATE specs=VALUES(specs),certificationID=VALUES(certificationID),certDate=VALUES(certDate),expireDate=VALUES(expireDate),status=VALUES(status),isCancled=VALUES(isCancled),update_date=now()',data,function(err,result){
                     if(err){
-                        console.log(batchId,item.month,item.company,item.prodType,item.rule,item.unit,item.specs,item.certificationID,item.certDate,item.expireDate,item.status,item.isCancled)
+                        //console.log(batchId,curMonth,item.company,item.prodType,item.rule,item.unit,item.specs,item.certificationID,item.certDate,item.expireDate,item.status,item.isCancled)
                         console.log('qts',err)
-                    }
+                    }else{
+						console.log(result)
+						console.log('insert success')
+					}
                    
-                });
+                });				
     },callback);
+	 connection.release()
+	}catch(err){
+		console.log('save qts error: ',err);
+	}
 }
 
 
@@ -113,7 +129,7 @@ exports.qts = function(list,callback){
 exports.gasgoo = function(list,callback){
     console.log('save gasgoo')
     var connection = list.connection
-    async.forEach(list.res,function(item,cb){
+    list.res.forEach(function(item){
         console.log('save gasgoo: ',JSON.stringify(item));
 			var datetimeType = "";  
 		    var date = new Date();   
@@ -141,12 +157,16 @@ exports.gasgoo = function(list,callback){
                     if(err){
                         console.log(batchId,curMonth,item.search_target,item.company)
                         console.log('gasgoo',err)
-                    }
-                    cb();
+                    }else{
+						console.log(result)
+						console.log('insert success')
+					}
+                   
                 });
 				
 		
     },callback);
+	 connection.release()
 }
 
 

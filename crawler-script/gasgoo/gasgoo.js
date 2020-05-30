@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer');
+ const puppeteer = require('puppeteer');
 var conf = require('./../config/config');
 var pool = conf.pool;
 var save = require('./../save/save');
@@ -15,7 +15,7 @@ var save = require('./../save/save');
 
 
 
-let companyNameList = ['特斯拉','大众','一汽解放','中国重汽','东风商用车'];
+let companyNameList = ['一汽解放','东风商用车','中国重汽','陕重汽','特斯拉','宝马','奔驰','奥迪','大众','本田','丰田','比亚迪','吉利','长城','奇瑞','上汽乘用车','广汽乘用车'];
 
 let pageList = [10,100,500,1000,10000];
 
@@ -24,30 +24,30 @@ let pageList = [10,100,500,1000,10000];
 		await page.addScriptTag({path: '/opt/haier/crawler-script/jquery-3.2.1/jquery-3.2.1.min.js'})
 		await page.goto('http://i.gasgoo.com/login.aspx?return=http://i.gasgoo.com/');  
 
-		/***********************************
-		*    登录
+	/***********************************
+			*    登录
 		***********************************/
 		await login(page);
 		await page.waitFor(4000);
 		
 
-for(var z=0;z<companyNameList.length;z++){
+	for(var z=0;z<companyNameList.length;z++){
 
-	try{
+		try{
 
 	
-		let maxPageNum = 0;
-		for(var a=0;a<pageList.length;a++){
-			
-			maxPageNum = await getPageNum(page,companyNameList[z],pageList[a])
-			
-			if(maxPageNum == null){
-				continue; 
-			}else{
-				break;
+			let maxPageNum = 0;
+			for(var a=0;a<pageList.length;a++){
+				
+				maxPageNum = await getPageNum(page,companyNameList[z],pageList[a])
+				
+				if(maxPageNum == null){
+					continue; 
+				}else{
+					break;
+				}
+				
 			}
-			
-		}
 		
 		console.log("companyName: " + companyNameList[z] + "  " + maxPageNum)
 		
@@ -70,16 +70,42 @@ for(var z=0;z<companyNameList.length;z++){
 		*    获取每个分页的公司列表及详情url
 		***********************************/
 		let totalCompanyList = new Array();
-		for(var k=0;k<urlList.length;k++){
+		
+		let urlPartLength = urlList.length/5;
+		
+		for(var u=0;u<urlPartLength;u++){
+			
+			let partStart = u*5;
+			let partEnd = (u + 1)*5;
+			
+			for(var k=partStart;k<partEnd;k++){
 			let companyList = await getCompanyListByUrl(page,urlList[k]);
-			//console.log(companyList);
-			totalCompanyList= totalCompanyList.concat(companyList);
+				//console.log(companyList);
+				totalCompanyList= totalCompanyList.concat(companyList);
+			}
+			/***********************************
+			*    退出登录
+			************************************/
+			await page.goto('http://i.gasgoo.com/logout.aspx');
+			
+			/***********************************
+			*    登录
+			***********************************/
+			
+			//page = await browser.newPage()  
+			await page.goto('http://i.gasgoo.com/login.aspx?return=http://i.gasgoo.com/');  
+
+			/***********************************
+			*    登录
+			***********************************/
+			await login(page);
+			await page.waitFor(4000);
+			
 		}
+		
+		
 		/***********************************
-		*    退出登录
-		************************************/
-		//await page.goto('http://i.gasgoo.com/logout.aspx');
-		/***********************************
+		
 		*    获取每个公司详情
 		************************************/
 		console.log("==================company size============="+totalCompanyList.length);
@@ -135,11 +161,11 @@ async function login(page){
 		// document.querySelector("#txtPassword").value="lyzh1688";
 
 
-		document.querySelector("#txtUserName").value="19145525646";
-		document.querySelector("#txtPassword").value="y2iaciej";
+		//document.querySelector("#txtUserName").value="19145525646";
+		//document.querySelector("#txtPassword").value="y2iaciej";
 
-		// document.querySelector("#txtUserName").value="13020239152";
-		// document.querySelector("#txtPassword").value="Deng6028784";
+		 document.querySelector("#txtUserName").value="13020239152";
+		 document.querySelector("#txtPassword").value="Deng6028784";
 		document.querySelector("#btnLogin").click();	
 	});
 }
@@ -253,6 +279,6 @@ async function getCompanyBusinessInfo(page,url){
 	return businessInfo;
 
 }
-//await page.waitFor(1000);
-//browser.close();
+await page.waitFor(1000);
+browser.close();
 })();

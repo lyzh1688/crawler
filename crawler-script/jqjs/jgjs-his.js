@@ -32,7 +32,7 @@ var save = require('./../save/save')
 	}
 
 	console.log('end； ' + new Date());
-	//await browser.close();
+	await browser.close();
 
 })()
 
@@ -49,7 +49,6 @@ async function queryPage(page,j) {
 			for( var k = 0;k<data.length;k++){
 				let tmpData = data[k];
 				tmpData.release_date = data_date
-				tmpData.data_date = data_date
 				dataList.push(tmpData)
 				console.log('data: ' + JSON.stringify(tmpData))
 			}
@@ -94,11 +93,38 @@ async function parsePriceDetail(page,url) {
 	await page.goto(url); 
 	res = await page.evaluate(async ()=>{
 		
-		//let div = $('#zoom');
-		//let dataDate = $('#zoom div p').eq(3).text().replace('年','').replace('月','').replace('日','');
+		let div = $('#zoom');
+		
+		let p = $('#zoom div p')
+		var dataDate =''
+		for( var k = 0;k<p.length;k++){	
+			var text = $('#zoom div p').eq(k).text();
+			var date = new Date(); 
+			var year = date.getFullYear();
+			var startText = text.substring(0,4)
+			if(startText == year){
+				//2020年5月20日
+				var yearIndex = text.indexOf('年');
+				var monthIndex = text.indexOf('月');
+				var dayIndex = text.indexOf('日');
+				var tmpyear = text.substring(0,yearIndex)
+				var tmpmonth = text.substring(yearIndex +1 ,monthIndex)
+				if(tmpmonth.length < 2){
+					tmpmonth = '0' + tmpmonth;
+				}
+				var tmpday = text.substring(monthIndex+1,dayIndex)
+				if(tmpday.length < 2){
+					tmpday = '0' + tmpday;
+				}
+				
+				dataDate =tmpyear + tmpmonth + 	tmpday
+							
+			}
+			
+		}
 		
 		
-		//console.log("dataDate: " + dataDate)
+	//	console.log("dataDate: " + dataDate)
 		
 		
 		
@@ -148,7 +174,7 @@ async function parsePriceDetail(page,url) {
 					statData.stat_type = 'mom'
 				}
 				
-				//data.data_date = dataDate
+				statData.data_date = dataDate
 				items.push(statData)
 			}
 			
@@ -159,12 +185,9 @@ async function parsePriceDetail(page,url) {
 		console.log(err)
 	}
 
-	console.log('result: ' + JSON.stringify(res))
+	//console.log('result: ' + JSON.stringify(res))
 	return res;
 }
-
-
-
 
 
 
