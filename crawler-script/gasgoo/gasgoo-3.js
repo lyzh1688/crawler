@@ -1,26 +1,18 @@
- const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer');
 var conf = require('./../config/config');
 var pool = conf.pool;
 var save = require('./../save/save');
 
 (async () => {  
 
-    //const browser = await puppeteer.launch({
-    //    executablePath: '/opt/haier/crawler-script/node_modules/_puppeteer@3.1.0@puppeteer/.local-chromium/linux-756035/chrome-linux/chrome',
-    //    headless: false
-    //  });
-	
-	  const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
+  const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
 
 
-
-
-let companyNameList = ['奔驰','陕重汽','特斯拉','宝马'];
+let companyNameList = ['本田','丰田','比亚迪'];
 
 let pageList = [10,100,500,1000,10000];
 
-
-	const page = await browser.newPage()  
+const page = await browser.newPage()  
 		await page.addScriptTag({path: '/opt/haier/crawler-script/jquery-3.2.1/jquery-3.2.1.min.js'})
 		
 
@@ -199,8 +191,8 @@ async function login(page){
 		
 		document.querySelector("#loginUser").click();
 		
-		document.querySelector("#txtUserName").value="17502172636";
-		document.querySelector("#txtPassword").value="Deng602878";
+		//document.querySelector("#txtUserName").value="17502172636";
+		//document.querySelector("#txtPassword").value="Deng6028784";
 
 		//document.querySelector("#txtUserName").value="13818254058";
 		//document.querySelector("#txtPassword").value="qwer1234";
@@ -210,11 +202,11 @@ async function login(page){
 		// document.querySelector("#txtPassword").value="lyzh1688";
 
 
-		//document.querySelector("#txtUserName").value="19145525646";
-		//document.querySelector("#txtPassword").value="y2iaciej";
+		document.querySelector("#txtUserName").value="19145525646";
+		document.querySelector("#txtPassword").value="y2iaciej";
 
 		// document.querySelector("#txtUserName").value="13020239152";
-		 //document.querySelector("#txtPassword").value="Deng6028784";
+		// document.querySelector("#txtPassword").value="Deng6028784";
 		
 		
 		
@@ -300,7 +292,7 @@ async function getCompanyBusinessInfo(page,url){
 	let businessInfo = ''
 	try{
 		await page.goto(url);
-		//await page.waitForNavigation(0);
+	//	await page.waitForNavigation(0);
 		await page.waitFor(5000);
 		businessInfo=page.evaluate(async ()=>{
 		let businessInfo = {};

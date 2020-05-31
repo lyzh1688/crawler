@@ -19,5 +19,6 @@
     expireDate, status, isCancled
     from crawler_qts_result
     where month = #{month}
+    order by certDate desc
   </select>
 </mapper>

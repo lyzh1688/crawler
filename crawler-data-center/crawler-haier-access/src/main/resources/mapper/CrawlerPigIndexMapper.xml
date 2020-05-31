@@ -17,5 +17,6 @@
     avg_trade_weight
     from crawler_pigindex_result
     WHERE data_date >= #{beginDate} AND data_date <![CDATA[ <= ]]> #{endDate}
+    order by data_date desc
   </select>
 </mapper>

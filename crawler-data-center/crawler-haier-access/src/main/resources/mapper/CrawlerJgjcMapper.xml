@@ -17,6 +17,6 @@
   <select id="selectAll" resultMap="BaseResultMap">
     select batch_id, data_date, product_type, stat_type, raw_price, fodder_price, rate,
     balance, profit_count, update_date
-    from crawler_jgjc_result
+    from crawler_jgjc_result order by data_date desc
   </select>
 </mapper>
