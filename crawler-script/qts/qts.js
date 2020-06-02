@@ -23,6 +23,17 @@ var save = require('./../save/save')
 
 	
 	console.log('start ； ' + new Date());
+	let startLog = []
+			let log = {}
+			log.crawler_type = 'qts';
+			log.step = 'start';
+			log.message = 'start crawler qts' + companyNameList[z];
+			startLog.push(log)
+			pool.getConnection(function (err, connection) {
+							save.log({"connection": connection, "res": startLog}, function () {
+								console.log('start insert qts log success')
+							})
+						})
 	
 	//1、设置页数，点击翻页
 	//2、解析页面
@@ -43,11 +54,19 @@ var save = require('./../save/save')
 			await page.waitFor(90000);
 	}
 	
- 
+	let endLog = []
+		log.step = 'end';
+		log.message = 'end crawler  qts' + companyNameList[z];
+		endLog.push(log)
+		pool.getConnection(function (err, connection) {
+						save.log({"connection": connection, "res": endLog}, function () {
+							console.log('end insert qts log success')
+						})
+					})
 
 
 	console.log('end； ' + new Date());
-//	await browser.close();
+	await browser.close();
 
 })()
 /**********************************

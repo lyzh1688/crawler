@@ -71,7 +71,7 @@ exports.jgjc = function(list,callback){
                         console.log(batchId,item.index,item.data_date,item.index,item.change_rate,item.change,item.name,item.booking_price,item.trade_price,item.avg_trade_weight,item.release_date)
                         console.log('jgjc',err)
                     }else{
-						console.log(result)
+						//console.log(result)
 						console.log('insert success')
 					}
                 });
@@ -130,7 +130,7 @@ exports.gasgoo = function(list,callback){
     console.log('save gasgoo')
     var connection = list.connection
     list.res.forEach(function(item){
-        console.log('save gasgoo: ',JSON.stringify(item));
+       // console.log('save gasgoo: ',JSON.stringify(item));
 			var datetimeType = "";  
 		    var date = new Date();   
 		  
@@ -158,7 +158,7 @@ exports.gasgoo = function(list,callback){
                         console.log(batchId,curMonth,item.search_target,item.company)
                         console.log('gasgoo',err)
                     }else{
-						console.log(result)
+						//console.log(result)
 						console.log('insert success')
 					}
                    
@@ -171,6 +171,28 @@ exports.gasgoo = function(list,callback){
 
 
 
+//log
+exports.log = function(list,callback){
+    console.log('save log')
+    var connection = list.connection
+    list.res.forEach(function(item){
+			
+		
+			var data = [item.crawler_type,item.step,item.message]	
+                connection.query('insert into crawler_log(crawler_type,step,message,update_date) values(?,?,?,now()) ',data,function(err,result){
+                    if(err){
+                        console.log(batchId,item.crawler_type,item.step,item.message)
+                        console.log('log',err)
+                    }else{
+						//console.log('insert success')
+					}
+                   
+                });
+				
+		
+    },callback);
+	 connection.release()
+}
 
 
 

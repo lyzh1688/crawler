@@ -16,7 +16,17 @@ var save = require('./../save/save')
 	page.setDefaultNavigationTimeout(0)
 	
 	
-	console.log('start ； ' + new Date());
+	let startLog = []
+			let log = {}
+			log.crawler_type = 'pigIndex';
+			log.step = 'start';
+			log.message = 'start crawler pigIndex';
+			startLog.push(log)
+			pool.getConnection(function (err, connection) {
+							save.log({"connection": connection, "res": startLog}, function () {
+								console.log('start insert pigIndex log success')
+							})
+						})
 	
 	let array = []
 	for( var id = 0;id<8;id++){
@@ -37,6 +47,15 @@ var save = require('./../save/save')
 	
 	console.log('array: ' + JSON.stringify(array))
 
+		let endLog = []
+		log.step = 'end';
+		log.message = 'end crawler  pigIndex' + companyNameList[z];
+		endLog.push(log)
+		pool.getConnection(function (err, connection) {
+						save.log({"connection": connection, "res": endLog}, function () {
+							console.log('end insert pigIndex log success')
+						})
+					})
 	console.log('end ； ' + new Date());
 	await browser.close();
 

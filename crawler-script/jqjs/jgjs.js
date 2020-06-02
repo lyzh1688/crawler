@@ -19,6 +19,17 @@ var save = require('./../save/save')
 	
 	
 	console.log('start ； ' + new Date());
+	let startLog = []
+	let log = {}
+	log.crawler_type = 'jgjc';
+	log.step = 'start';
+	log.message = 'start crawler jgjc';
+	startLog.push(log)
+	pool.getConnection(function (err, connection) {
+                    save.log({"connection": connection, "res": startLog}, function () {
+                        console.log('start insert jgjc log success')
+                    })
+                })
 	
 	//提供所有的页码
 	//for( var i = 0;i<16;i++){	
@@ -29,9 +40,19 @@ var save = require('./../save/save')
                     })
                 })
 	//}
-console.log('end； ' + new Date());
+	
+	let endLog = []
+	log.step = 'end';
+	log.message = 'end crawler jgjc';
+	endLog.push(log)
+	pool.getConnection(function (err, connection) {
+                    save.log({"connection": connection, "res": endLog}, function () {
+                        console.log('end insert jgjc log success')
+                    })
+                })
+	
+	console.log('end: ' + new Date());
 	await browser.close();
-
 })()
 
 

@@ -17,6 +17,19 @@ var save = require('./../save/save')
 	
 	console.log('start ； ' + new Date());
 	
+	let startLog = []
+			let log = {}
+			log.crawler_type = 'pigIndex-his';
+			log.step = 'start';
+			log.message = 'start crawler pigIndex-his';
+			startLog.push(log)
+			pool.getConnection(function (err, connection) {
+							save.log({"connection": connection, "res": startLog}, function () {
+								console.log('start insert pigIndex-his log success')
+							})
+						})
+	
+	
 	for( var id = 0;id<8;id++){
 	 let array =　await queryPageUrlPost(page,id);
 	  pool.getConnection(function (err, connection) {
@@ -28,6 +41,15 @@ var save = require('./../save/save')
 	 
 	}
 	
+		let endLog = []
+		log.step = 'end';
+		log.message = 'end crawler  pigIndex-his' + companyNameList[z];
+		endLog.push(log)
+		pool.getConnection(function (err, connection) {
+						save.log({"connection": connection, "res": endLog}, function () {
+							console.log('end insert pigIndex-his log success')
+						})
+					})
 
 	console.log('end ； ' + new Date());
 	await browser.close();

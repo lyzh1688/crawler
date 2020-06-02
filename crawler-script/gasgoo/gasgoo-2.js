@@ -23,6 +23,20 @@ const page = await browser.newPage()
 	for(var z=0;z<companyNameList.length;z++){
 
 		try{
+			
+			
+			let startLog = []
+			let log = {}
+			log.crawler_type = 'gasgoo-2';
+			log.step = 'start';
+			log.message = 'start crawler gasgoo-2' + companyNameList[z];
+			startLog.push(log)
+			pool.getConnection(function (err, connection) {
+							save.log({"connection": connection, "res": startLog}, function () {
+								console.log('start insert gasgoo-2 log success')
+							})
+						})
+			
 
 			/***********************************
 				*    登录
@@ -163,12 +177,24 @@ const page = await browser.newPage()
 		}
 		
 		
+		let endLog = []
+		log.step = 'end';
+		log.message = 'end crawler  gasgoo-2' + companyNameList[z];
+		endLog.push(log)
+		pool.getConnection(function (err, connection) {
+						save.log({"connection": connection, "res": endLog}, function () {
+							console.log('end insert gasgoo-2 log success')
+						})
+					})
+		
+		
 		
 
 		
 	}catch(err){
 	  console.log(err)
 	  console.log(err.message);
+	  await browser.close();
 	}
 
 }
