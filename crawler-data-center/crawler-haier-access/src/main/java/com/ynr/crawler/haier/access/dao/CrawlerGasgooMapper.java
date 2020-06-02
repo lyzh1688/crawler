@@ -12,6 +12,8 @@ public interface CrawlerGasgooMapper extends BaseMapper<CrawlerGasgoo> {
 
     IPage<CrawlerGasgoo> selectByTarget(Page page, @Param("searchTarget") String serachTarget, @Param("month") String month);
 
+    IPage<CrawlerGasgoo> selectAllTarget(Page page,  @Param("month") String month);
+
     List<CrawlerGasgoo> selectTargetAttr(@Param("searchTarget") String serachTarget, @Param("list") List<String> companyNames, @Param("month") String month);
 
 

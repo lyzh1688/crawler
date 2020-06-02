@@ -1,6 +1,7 @@
 package com.ynr.crawler.haier.access.endpoint;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.ynr.crawler.haier.access.dict.ProductType;
 import com.ynr.crawler.haier.access.dto.*;
@@ -38,54 +39,66 @@ public class CrawlerDataEndpoint {
     private CrawlerQtsService crawlerQtsService;
 
 
-    @GetMapping("/jgjc/{target}/{dataDate}")
+    @GetMapping("/jgjc/{target}/{begin}/{end}")
     public CrawlerJgjcResponse queryJgjcData(@PathVariable("target") String target,
-                                             @PathVariable("dataDate") String dataDate) {
-        log.info("[queryJgjcData] target: {},dataDate: {}", target, dataDate);
-        List<CrawlerJgjc> crawlerJgjcList = this.crawlerJgjcService.queryCrawlerJgjc(target, dataDate);
-        CrawlerJgjcInfo crawlerJgjcInfo = new CrawlerJgjcInfo();
-        crawlerJgjcInfo.setDataDate(dataDate);
-        if (!crawlerJgjcList.isEmpty()) {
-            crawlerJgjcInfo.setReleaseDate(crawlerJgjcList.get(0).getReleaseDate());
-        }
-//        pork,chicken,egg
-        Map<String, List<CrawlerJgjc>> productMap = crawlerJgjcList.stream()
-                .collect(Collectors.groupingBy(CrawlerJgjc::getProductType));
-//        curWeek,lastWeek,mom
-        Map<String, Map<String, CrawlerJgjcItem>> jgjcItemMap = productMap.entrySet()
+                                             @PathVariable("begin") String begin,
+                                             @PathVariable("end") String end) {
+        log.info("[queryJgjcData] target: {},begin: {},end: {}", target, begin,end);
+        Map<String,List<CrawlerJgjc>> jgjcMap = this.crawlerJgjcService.queryCrawlerJgjc(target, begin,end)
                 .stream()
-                .flatMap(entry -> {
-                    Map<String, Map<String, CrawlerJgjcItem>> tmpMap = Maps.newHashMap();
-                    Map<String, CrawlerJgjcItem> tmpJgjcMap = Maps.newHashMap();
-                    for (CrawlerJgjc jgjc : entry.getValue()) {
-                        CrawlerJgjcItem item = new CrawlerJgjcItem();
-                        item.setBalance(jgjc.getBalance());
-                        item.setFodderPrice(jgjc.getFodderPrice());
-                        item.setProfitCount(jgjc.getProfitCount());
-                        item.setRate(jgjc.getRate());
-                        item.setRawPrice(jgjc.getRawPrice());
-                        tmpJgjcMap.put(jgjc.getStatType(), item);
-                    }
-                    tmpMap.put(entry.getKey(), tmpJgjcMap);
-                    return tmpMap.entrySet().stream();
-                }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        for (Map.Entry<String, Map<String, CrawlerJgjcItem>> entry : jgjcItemMap.entrySet()) {
-            ProductType productType = ProductType.valueOfProductType(entry.getKey());
-            switch (productType) {
-                case PORK:
-                    crawlerJgjcInfo.setPork(entry.getValue());
-                    break;
-                case EGG:
-                    crawlerJgjcInfo.setEgg(entry.getValue());
-                    break;
-                case CHICKEN:
-                    crawlerJgjcInfo.setChicken(entry.getValue());
-                    break;
-                default:
-                    break;
+                .collect(Collectors.groupingBy(CrawlerJgjc::getDataDate));
+        List<CrawlerJgjcInfo> crawlerJgjcInfoList = Lists.newArrayList();
+        for (Map.Entry<String,List<CrawlerJgjc>> dateEntry:jgjcMap.entrySet()) {
+            List<CrawlerJgjc> crawlerJgjcList = dateEntry.getValue();
+            CrawlerJgjcInfo crawlerJgjcInfo = new CrawlerJgjcInfo();
+            if (!crawlerJgjcList.isEmpty()) {
+                crawlerJgjcInfo.setDataDate(crawlerJgjcList.get(0).getDataDate());
+                crawlerJgjcInfo.setReleaseDate(crawlerJgjcList.get(0).getReleaseDate());
             }
+//        pork,chicken,egg
+            Map<String, List<CrawlerJgjc>> productMap = crawlerJgjcList.stream()
+                    .collect(Collectors.groupingBy(CrawlerJgjc::getProductType));
+//        curWeek,lastWeek,mom
+            Map<String, Map<String, CrawlerJgjcItem>> jgjcItemMap = productMap.entrySet()
+                    .stream()
+                    .flatMap(entry -> {
+                        Map<String, Map<String, CrawlerJgjcItem>> tmpMap = Maps.newHashMap();
+                        Map<String, CrawlerJgjcItem> tmpJgjcMap = Maps.newHashMap();
+                        for (CrawlerJgjc jgjc : entry.getValue()) {
+                            CrawlerJgjcItem item = new CrawlerJgjcItem();
+                            item.setBalance(jgjc.getBalance());
+                            item.setFodderPrice(jgjc.getFodderPrice());
+                            item.setProfitCount(jgjc.getProfitCount());
+                            item.setRate(jgjc.getRate());
+                            item.setRawPrice(jgjc.getRawPrice());
+                            tmpJgjcMap.put(jgjc.getStatType(), item);
+                        }
+                        tmpMap.put(entry.getKey(), tmpJgjcMap);
+                        return tmpMap.entrySet().stream();
+                    }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            for (Map.Entry<String, Map<String, CrawlerJgjcItem>> entry : jgjcItemMap.entrySet()) {
+                ProductType productType = ProductType.valueOfProductType(entry.getKey());
+                assert productType != null;
+                switch (productType) {
+                    case PORK:
+                        crawlerJgjcInfo.setPork(entry.getValue());
+                        break;
+                    case EGG:
+                        crawlerJgjcInfo.setEgg(entry.getValue());
+                        break;
+                    case CHICKEN:
+                        crawlerJgjcInfo.setChicken(entry.getValue());
+                        break;
+                    default:
+                        break;
+                }
+            }
+            crawlerJgjcInfoList.add(crawlerJgjcInfo);
         }
-        return new CrawlerJgjcResponse(crawlerJgjcInfo);
+        CrawlerJgjcList crawlerJgjcList = new CrawlerJgjcList();
+        crawlerJgjcList.setItems(crawlerJgjcInfoList);
+
+        return new CrawlerJgjcResponse(crawlerJgjcList);
     }
 
 
@@ -119,12 +132,13 @@ public class CrawlerDataEndpoint {
         log.info("[queryGasgooData] searchTarget: {},month: {},pageId: {}", searchTarget, month, pageId);
         IPage<CrawlerGasgoo> pageResult = this.crawlerGasgooService.queryCrawlerGasgooData(searchTarget, month, pageId);
         List<CrawlerGasgoo> crawlerGasgooList = pageResult.getRecords();
-        long totalCnt = pageResult.getRecords().size();
+        long totalCnt = pageResult.getTotal();
         List<CrawlerGasgooCompany> crawlerGasgooCompanyList = crawlerGasgooList
                 .stream()
                 .map(crawlerGasgoo -> {
                     CrawlerGasgooCompany company = new CrawlerGasgooCompany();
                     company.setCompany(crawlerGasgoo.getCompany());
+                    company.setAutomaker(crawlerGasgoo.getSearchTarget());
                     List<CrawlerGasgooBizItem> items = crawlerGasgoo.getAttrs()
                             .stream()
                             .map(attr -> {

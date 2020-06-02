@@ -5,13 +5,14 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * Code Monkey: ºÎ±ë <br>
+ * Code Monkey: ä½•å½ª<br>
  * Dev Time: 2020/5/17 <br>
  */
 @Data
 public class CrawlerGasgooCompany {
 
     private String company;
+    private String automaker;
     private List<CrawlerGasgooBizItem> bizInfo;
 
 

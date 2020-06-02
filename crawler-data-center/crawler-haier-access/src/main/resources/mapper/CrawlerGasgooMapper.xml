@@ -20,6 +20,13 @@
     group by company
     order by company desc
   </select>
+    <select id="selectAllTarget" resultMap="BaseResultMap">
+    select batch_id, month, search_target, company
+    from crawler_gasgoo_result
+    where  month = #{month}
+    group by search_target,company
+    order by search_target desc,company desc
+  </select>
     <select id="selectTargetAttr" resultMap="BaseResultMap">
     select batch_id, month, search_target, company,attribute,attr_value
     from crawler_gasgoo_result

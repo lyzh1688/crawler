@@ -6,11 +6,11 @@ import com.ynr.crawler.haier.access.model.CrawlerJgjc;
 import java.util.List;
 
 /**
- * Code Monkey: ºÎ±ë <br>
+ * Code Monkey: ä½•å½ª <br>
  * Dev Time: 2020/5/17 <br>
  */
 public interface CrawlerJgjcService extends IService<CrawlerJgjc> {
-    List<CrawlerJgjc> queryCrawlerJgjc(String target, String dataDate);
+    List<CrawlerJgjc> queryCrawlerJgjc(String target, String begin,String end);
 
 
 }

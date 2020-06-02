@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Code Monkey: ºÎ±ë <br>
+ * Code Monkey: ä½•å½ª <br>
  * Dev Time: 2020/5/17 <br>
  */
 @Service
@@ -19,11 +19,13 @@ import java.util.List;
 public class CrawlerJgjcServiceImpl extends ServiceImpl<CrawlerJgjcMapper, CrawlerJgjc> implements CrawlerJgjcService {
 
     @Override
-    public List<CrawlerJgjc> queryCrawlerJgjc(String target, String dataDate) {
+    public List<CrawlerJgjc> queryCrawlerJgjc(String target, String begin,String end) {
         if (target.equals("all")) {
-            return this.list(Wrappers.<CrawlerJgjc>query().lambda().eq(CrawlerJgjc::getDataDate, dataDate));
+            return this.list(Wrappers.<CrawlerJgjc>query().lambda().ge(CrawlerJgjc::getDataDate, begin)
+            .le(CrawlerJgjc::getDataDate, end));
         }
         return this.list(Wrappers.<CrawlerJgjc>query().lambda().eq(CrawlerJgjc::getProductType, target)
-                .eq(CrawlerJgjc::getDataDate, dataDate));
+                .ge(CrawlerJgjc::getDataDate, begin)
+                .le(CrawlerJgjc::getDataDate, end));
     }
 }
