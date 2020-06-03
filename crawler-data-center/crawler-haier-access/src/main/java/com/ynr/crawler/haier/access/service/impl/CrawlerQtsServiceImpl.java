@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
- * Code Monkey: ºÎ±ë <br>
+ * Code Monkey: ä½•å½ª<br>
  * Dev Time: 2020/5/18 <br>
  */
 @Service
@@ -20,7 +20,7 @@ public class CrawlerQtsServiceImpl extends ServiceImpl<CrawlerQtsMapper, Crawler
     @Override
     public IPage<CrawlerQts> queryCrawlerQtsData(String month, int pageId) {
 
-        Page page = new Page(pageId, 20);
+        Page page = new Page(pageId, 1000);
         return this.baseMapper.selectCrawlerQtsByPage(page, month);
     }
 }
