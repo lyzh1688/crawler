@@ -14,7 +14,7 @@
     </modules>
 
     <properties>
-        <spring-boot.version>1.5.18.RELEASE</spring-boot.version>
+        <spring-boot.version>2.5.12</spring-boot.version>
         <spring-framework.version>4.3.21.RELEASE</spring-framework.version>
         <crawler.version>1.0-SNAPSHOT</crawler.version>
         <mybatis-plus.version>3.0.6</mybatis-plus.version>
